@@ -1,12 +1,7 @@
-
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-
-export default async function Dashboard() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) redirect('/login') // fallback if middleware misses it
-
-  return <p>Welcome {user.email}</p>
+export default function DashboardPage() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+    </div>
+  );
 }
