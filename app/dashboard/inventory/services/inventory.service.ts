@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
-
+import { InventoryCreate } from '../types/inventory.types'
 const BUCKET = 'pos-bucker'
 
 export const supabase = createClient()
@@ -9,11 +9,16 @@ export async function getInventory() {
   return data || []
 }
 
-export async function createInventory(payload: any) {
+export async function getOneInventory(id: string) {
+  const { data } = await supabase.from('inventory').select('*').eq('id', id).single()
+  return data || {} //not tested
+}
+
+export async function createInventory(payload: InventoryCreate) {
   return supabase.from('inventory').insert(payload)
 }
 
-export async function updateInventory(id: string, payload: any) {
+export async function updateInventory(id: string, payload: InventoryCreate) {
   return supabase.from('inventory').update(payload).eq('id', id)
 }
 
