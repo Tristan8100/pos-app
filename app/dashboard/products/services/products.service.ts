@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
-import { Product } from '../types/products.type'
+import { Ingredient, Product } from '../types/products.type'
 
 
 const BUCKET = 'pos-bucker'
@@ -7,8 +7,28 @@ const BUCKET = 'pos-bucker'
 export const supabase = createClient()
 
 export async function getProducts() {
-    const { data } = await createClient().from('products').select('*')
-    return data || []
+  const { data, error } = await createClient()
+    .from('products')
+    .select(`
+      *,
+      product_ingredients (
+        quantity,
+        inventory (
+          id,
+          name,
+          measurement,
+          price_per_serving,
+          image_path
+        )
+      )
+    `)
+
+  if (error) {
+    console.error(error)
+    return []
+  }
+
+  return data || []
 }
 
 export async function getOneProduct(id: string) {
@@ -28,8 +48,27 @@ export async function uploadImage(file: File) {
   return filePath
 }
 
+export async function deleteImage(path: string) {
+  const { error } = await supabase.storage
+    .from(BUCKET)
+    .remove([path])
+
+  if (error) throw error
+}
+
 export async function createProduct(payload: Omit<Product, 'id' | 'image_path'>) {
-  return supabase.from('products').insert([payload])
+  return supabase.from('products').insert([payload]).select().single()
+}
+
+export async function addIngredients(data: Omit<Ingredient, 'id'>[]) {//should be an array of objects
+  return supabase.from('product_ingredients').insert(data)
+}
+
+export async function deleteIngredients(productId: string) {
+  return supabase
+    .from('product_ingredients')
+    .delete()
+    .eq('product_id', productId)
 }
 
 export async function updateProduct(id: string, payload: any) {

@@ -1,7 +1,7 @@
 'use client'
-import { getProducts, createProduct, uploadImage } from '../services/products.service'
+import { getProducts, createProduct, uploadImage, addIngredients, deleteImage, updateProduct, deleteIngredients } from '../services/products.service'
 import { useState, useEffect } from 'react'
-import { Product } from '../types/products.type'
+import { IngredientForm, Product } from '../types/products.type'
 
 export function useProducts() {
     const [products, setProducts] = useState<Product[]>([])
@@ -23,12 +23,63 @@ export function useProducts() {
         setLoading(false)
     }
 
-    const createProductService = async (payload: Omit<Product, 'id' | 'image_path'>, file: File) => {
+    const createProductService = async (
+        payload: Omit<Product, 'id' | 'image_path'>,
+        file: File,
+        ingredients: IngredientForm[]
+    ) => {
         const image_path = await uploadImage(file)
         const payload_new = { ...payload, image_path }
-        await createProduct(payload_new)
+
+        const { data, error } = await createProduct(payload_new)
+        if (error || !data) throw error
+
+        const newData = ingredients.map(ingredient => ({
+            ...ingredient,
+            product_id: data.id
+        }))
+
+        await addIngredients(newData)
+
         fetchAndSetData()
     }
 
-    return { products, fetchProducts, createProductService, loading, setLoading }
+    const updateProductService = async (
+    id: string,
+    payload: Omit<Product, 'id' | 'image_path'>,
+    file: File | null,
+    ingredients: IngredientForm[],
+    currentImagePath?: string
+  ) => {
+    let image_path = currentImagePath
+
+    if (file) {
+      const newPath = await uploadImage(file)
+
+      if (currentImagePath) {
+        await deleteImage(currentImagePath)
+      }
+
+      image_path = newPath
+    }
+
+    await updateProduct(id, {
+      ...payload,
+      image_path
+    })
+
+    await deleteIngredients(id)
+
+    const mapped = ingredients.map(i => ({
+      product_id: id,
+      inventory_id: i.inventory_id,
+      quantity: i.quantity
+    }))
+
+    await addIngredients(mapped)
+
+    await fetchAndSetData()
+  }
+
+    return { products, fetchProducts, createProductService, loading, setLoading, updateProductService }
 }

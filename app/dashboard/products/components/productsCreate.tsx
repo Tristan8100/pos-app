@@ -2,13 +2,15 @@
 
 import { useProducts } from "../hooks/products.hook"
 import { useState } from "react"
-import { Ingredient, Product } from "../types/products.type"
+import { Ingredient, IngredientForm, Product } from "../types/products.type"
 import { useInventory } from "../../inventory/hooks/inventory.hooks"
 import { Input } from "@/components/ui/input"
 import ProductsInventoryList from "./productsInventoryList"
 
+
+
 interface ProductsCreateProps {
-    createProductService: (payload: Omit<Product, 'id' | 'image_path'>, file: File) => Promise<void>
+    createProductService: (payload: Omit<Product, 'id' | 'image_path'>, file: File, ingredients: IngredientForm[]) => Promise<void>
 }
 
 export default function ProductsCreate({ createProductService }: ProductsCreateProps) {
@@ -19,8 +21,9 @@ export default function ProductsCreate({ createProductService }: ProductsCreateP
           name: "",
           image_path: "",
           price: 0,
-          ingredients: []
     })
+
+    const [ingredients, setIngredients] = useState<IngredientForm[]>([])
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement>
@@ -38,36 +41,18 @@ export default function ProductsCreate({ createProductService }: ProductsCreateP
         if (!file) {
             return
         }
-        await createProductService(form, file)
+        await createProductService(form, file, ingredients)
 
         // reset form
         setForm({
             name: '',
             image_path: '',
             price: 0,
-            ingredients: []
         })
     }
 
-    const handleAddIngredient = (data: Ingredient) => {
-        setForm((prev) => {
-            const exists = prev.ingredients.some(
-                (item) => item.ingredientId === data.ingredientId
-            )
-
-            if (exists) {
-                console.log('ALREADY EXISTS')
-                return prev
-            }
-
-            const updated = {
-                ...prev,
-                ingredients: [...prev.ingredients, data]
-            }
-
-            console.log('UPDATED:', updated.ingredients)
-            return updated
-        })
+    const handleAddIngredient = (data : Omit<Ingredient, 'id' | 'product_id'>) => {
+        setIngredients(prev => [...prev, data])
     }
 
     return (
@@ -95,7 +80,7 @@ export default function ProductsCreate({ createProductService }: ProductsCreateP
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                 />
 
-                <button type="submit">
+                <button type="submit" className="border border-red-500">
                     Create Product
                 </button>
             </form>

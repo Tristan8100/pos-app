@@ -3,7 +3,7 @@ import { Inventory } from "../../inventory/types/inventory.types"
 import { Ingredient } from "../types/products.type"
 
 interface ProductsCreateProps {
-    addIngredients: (payload: Ingredient) => void
+    addIngredients: (payload: Omit<Ingredient, 'id' | 'product_id'>) => void
     data: Inventory[]
 }
 
@@ -15,7 +15,7 @@ export default function ProductsInventoryList({ data, addIngredients }: Products
         if (!selectedId) return
 
         addIngredients({
-            ingredientId: selectedId,
+            inventory_id: selectedId,
             quantity
         })
 
