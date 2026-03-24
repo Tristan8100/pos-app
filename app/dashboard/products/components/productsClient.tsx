@@ -1,7 +1,7 @@
 'use client'
 
 import { useProducts } from "../hooks/products.hook"
-import { useState } from "react"
+import { useState, useEffect, use } from "react"
 import ProductsCreate from "./productsCreate"
 import ProductEdit from "./productEdit"
 
@@ -19,10 +19,10 @@ import ProductsList from "./productsList"
 export default function ProductsClient() {
   const {
     products,
-    fetchProducts,
     loading,
     createProductService,
-    updateProductService
+    updateProductService,
+    fetchAndSetData
   } = useProducts()
 
   const [open, setOpen] = useState(false)
@@ -32,6 +32,10 @@ export default function ProductsClient() {
   const [form, setForm] = useState<any>({})
   const [file, setFile] = useState<File | null>(null)
   const [ingredients, setIngredients] = useState<any[]>([])
+
+  useEffect(() => {
+    fetchAndSetData()
+  }, []) //added since the hook also used in create, which will double call.
 
   if (loading) return <div>Loading...</div>
 
@@ -59,7 +63,7 @@ export default function ProductsClient() {
     <div className="space-y-6 p-4">
       {/* Fetch */}
       <button
-        onClick={fetchProducts}
+        onClick={fetchAndSetData}
         className="px-4 py-2 border rounded"
       >
         Fetch Products

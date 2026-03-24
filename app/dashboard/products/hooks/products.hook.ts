@@ -12,10 +12,6 @@ export function useProducts() {
         return res
     }
 
-    useEffect(() => {
-        fetchAndSetData()
-    }, [])
-
     async function fetchAndSetData() {
         setLoading(true)
         const res = await fetchProducts()
@@ -81,5 +77,5 @@ export function useProducts() {
     await fetchAndSetData()
   }
 
-    return { products, fetchProducts, createProductService, loading, setLoading, updateProductService }
+    return { products, fetchProducts, createProductService, loading, setLoading, updateProductService, fetchAndSetData, setProducts }
 }
