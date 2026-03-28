@@ -1,20 +1,18 @@
 'use client'
 
 import { Product, ProductIngredient } from "../../products/types/products.type"
-import { Order } from "../types/orders.types"
-
-interface SelectedOrderItem {
-  product: Product
-  items: ProductIngredient[]
-  addons: ProductIngredient[]
-}
+import { Order, SelectedOrderItem } from "../types/orders.types"
+import { createOrder } from "../services/orders.service"
+import { ordersHooks } from "../hooks/orders.hooks"
 
 export function OrderSummary({
   orders,
   setOrders,
+  handleSubmit
 }: {
   orders: SelectedOrderItem[]
   setOrders: React.Dispatch<React.SetStateAction<SelectedOrderItem[]>>
+  handleSubmit: (newOrders: SelectedOrderItem[]) => Promise<void>
 }) {
 
   const handleRemove = (index: number) => {
@@ -35,25 +33,6 @@ export function OrderSummary({
     return sum + calculateItemTotal(item)
   }, 0)
 
-  const handleSubmit = () => {
-    const payload: Omit<Order, 'id' | 'created_at' | 'staff_id'> = {
-    items: orders.map((item) =>
-        item.items.map((ingredient) => ({
-        productId: ingredient.inventory.id,
-        quantity: ingredient.quantity,
-        }))
-    ).flat(),
-    addons: orders.flatMap((item) =>
-        item.addons.map((addon) => ({
-        productId: addon.inventory.id,
-        quantity: addon.quantity,
-        price: addon.inventory.price_per_serving,
-        }))
-    ),
-    }
-
-    console.log("FINALL", payload)
-    }
 
   return (
     <div className="w-80 border-l p-4">
@@ -113,7 +92,7 @@ export function OrderSummary({
 
           {/* SUBMIT */}
           <button
-            onClick={handleSubmit}
+            onClick={() => handleSubmit(orders)}
             className="w-full bg-green-600 text-white py-2 rounded"
           >
             Submit Order

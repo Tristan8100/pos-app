@@ -69,6 +69,7 @@ export function useInventory() {
     loading,
     saveItem,
     removeItem,
-    refetch: fetchData
+    refetch: fetchData,
+    setData
   }
 }

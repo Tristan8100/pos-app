@@ -15,7 +15,7 @@ export interface Order {
   id: string
   staff_id: string
   created_at?: string
-
+  status: string
   items: OrderItem[]
   addons: OrderAddon[]
 }
@@ -23,5 +23,5 @@ export interface Order {
 export interface SelectedOrderItem { //for state only, too limited if use Order
   product: Product
   items: ProductIngredient[]
-  addons: ProductIngredient[]
+  addons: Omit<ProductIngredient, 'quantity_stock'>[]
 }

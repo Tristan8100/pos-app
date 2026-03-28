@@ -8,33 +8,30 @@ import { getImageUrl } from "@/helpers/getImage"
 import { ProductDialog } from "./orderCreate"
 import { Product, ProductIngredient } from "../../products/types/products.type"
 import { OrderSummary } from "./orderSummary"
-import { SelectedOrderItem } from "../types/orders.types"
+import { ordersHooks } from "../hooks/orders.hooks"
+import { useInventory } from "../../inventory/hooks/inventory.hooks"
+import { ref } from "node:process"
 
 export function OrdersClient() {
-  const { fetchAndSetData, products } = useProducts()
-
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
-  const [open, setOpen] = useState(false)
-
-  const [orders, setOrders] = useState<SelectedOrderItem[]>([])
+  const { 
+    products,
+    selectedProduct,
+    open,
+    setOpen,
+    orders,
+    setOrders,
+    handleOpen,
+    handleAddOrder,
+    fetchAndSetData,
+    handleSubmit
+  } = ordersHooks()
+  const { data, refetch, loading, setData } = useInventory()
 
   useEffect(() => {
     fetchAndSetData()
+    refetch()
   }, [])
-
-  const handleOpen = (product: Product) => {
-    setSelectedProduct(product)
-    setOpen(true)
-  }
-
-    const handleAddOrder = (
-    product: Product,
-    items: ProductIngredient[],
-    addons: ProductIngredient[]
-    ) => {
-        //use await and query inventory to check
-    setOrders((prev) => [...prev, { product, items, addons }])
-    }
+  
 
   return (
     <div className="flex">
@@ -79,11 +76,12 @@ export function OrdersClient() {
           onOpenChange={setOpen}
           product={selectedProduct}
           onSubmit={handleAddOrder}
+          data={data}
         />
       </div>
 
       {/* za right*/}
-      <OrderSummary orders={orders} setOrders={setOrders} />
+      <OrderSummary orders={orders} setOrders={setOrders} handleSubmit={() => handleSubmit(orders, refetch)} />
     </div>
   )
 }

@@ -18,7 +18,8 @@ export async function getProducts() {
           name,
           measurement,
           price_per_serving,
-          image_path
+          image_path,
+          quantity
         )
       )
     `)

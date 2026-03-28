@@ -12,11 +12,13 @@ import { getImageUrl } from "@/helpers/getImage"
 import { Product, ProductIngredient } from "../../products/types/products.type"
 import { useInventory } from "../../inventory/hooks/inventory.hooks"
 import { Input } from "@/components/ui/input"
+import { Inventory } from "../../inventory/types/inventory.types"
 
 interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
   product: Product | null
+  data: Inventory[]
   onSubmit: (
     product: Product,
     items: ProductIngredient[],
@@ -24,8 +26,7 @@ interface Props {
   ) => void
 }
 
-export function ProductDialog({ open, onOpenChange, product, onSubmit }: Props) {
-  const { data } = useInventory()
+export function ProductDialog({ open, onOpenChange, product, onSubmit, data }: Props) {
 
   const [ingredients, setIngredients] = useState<ProductIngredient[]>([])
   const [addons, setAddons] = useState<ProductIngredient[]>([])
@@ -37,7 +38,11 @@ export function ProductDialog({ open, onOpenChange, product, onSubmit }: Props) 
     }
   }, [product])
 
-  const handleAddAddons = (item: ProductIngredient) => {
+  useEffect(() => {
+    console.log("ADDONS", addons)
+  }, [addons])
+
+  const handleAddAddons = (item: Omit<ProductIngredient, 'quantity_stock'>) => {
     setAddons((prev) => [...prev, item])
   }
 
@@ -67,7 +72,7 @@ export function ProductDialog({ open, onOpenChange, product, onSubmit }: Props) 
 
             {ingredients.map((ingredient, index) => (
               <div key={index} className="flex items-center gap-2">
-                <span className="flex-1">{ingredient.inventory.name}</span>
+                <span className="flex-1">{ingredient.inventory.name} Current Stock {ingredient.inventory.quantity}</span>
 
                 <Input
                   type="number"
@@ -129,7 +134,7 @@ export function ProductDialog({ open, onOpenChange, product, onSubmit }: Props) 
                     })
                   }
                 >
-                  {item.name} (₱{item.price_per_serving})
+                  {item.name} (₱{item.price_per_serving}) Current Stock {item.quantity}
                 </button>
               ))}
             </div>
