@@ -26,36 +26,45 @@ export function ordersHooks() {
     items: ProductIngredient[],
     addons: Omit<ProductIngredient, 'quantity_stock'>[]
     ) => {
-        //use await and query inventory to check
     setOrders((prev) => [...prev, { product, items, addons }])
     }
 
-    const handleSubmit = async (newOrders: SelectedOrderItem[], refetch: () => void) => {
-        const payload: Omit<Order, 'id' | 'created_at' | 'staff_id' | 'status'> = {
-        items: newOrders.map((item) =>
-            item.items.map((ingredient) => ({
-            productId: ingredient.inventory.id,
-            quantity: ingredient.quantity,
-            }))
-        ).flat(),
-        addons: newOrders.flatMap((item) =>
-            item.addons.map((addon) => ({
-            productId: addon.inventory.id,
-            quantity: addon.quantity,
-            price: addon.inventory.price_per_serving,
-            }))
-        ),
-        }
+    const handleSubmit = async (
+    newOrders: SelectedOrderItem[],
+    total: number,
+    refetch: () => void
+    ) => {
+    const products = newOrders.map((order) => ({
+        id: order.product.id,
+        name: order.product.name,
 
-        console.log("FINALL PAYLOADD", payload)
-        try {
+        items: order.items.map((ingredient) => ({
+        productId: ingredient.inventory.id,
+        quantity: ingredient.quantity,
+        })),
+
+        addons: order.addons.map((addon) => ({
+        productId: addon.inventory.id,
+        quantity: addon.quantity,
+        price: addon.inventory.price_per_serving,
+        })),
+    }))
+
+    const payload: Omit<Order, 'id' | 'created_at' | 'staff_id' | 'status'> = {
+        products,
+        total,
+    }
+
+    console.log("FINAL PAYLOAD", payload)
+
+    try {
         await createOrder(payload)
-        } catch (error) {
+    } catch (error) {
         console.error(error)
-        } finally {
+    } finally {
         setOrders([])
         refetch()
-        }
+    }
     }
 
     return {

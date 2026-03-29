@@ -26,5 +26,6 @@ export interface Product {
   name: string
   image_path: string
   price: number
+  limited_quantity: number
   product_ingredients?: ProductIngredient[]
 }

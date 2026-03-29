@@ -44,7 +44,8 @@ export default function ProductsClient() {
 
     setForm({
       name: product.name,
-      price: product.price
+      price: product.price,
+      limited_quantity: product.limited_quantity
     })
 
     setIngredients(

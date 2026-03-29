@@ -12,7 +12,7 @@ export function OrderSummary({
 }: {
   orders: SelectedOrderItem[]
   setOrders: React.Dispatch<React.SetStateAction<SelectedOrderItem[]>>
-  handleSubmit: (newOrders: SelectedOrderItem[]) => Promise<void>
+  handleSubmit: (newOrders: SelectedOrderItem[], total: number) => Promise<void>
 }) {
 
   const handleRemove = (index: number) => {
@@ -92,7 +92,7 @@ export function OrderSummary({
 
           {/* SUBMIT */}
           <button
-            onClick={() => handleSubmit(orders)}
+            onClick={() => handleSubmit(orders, grandTotal)}
             className="w-full bg-green-600 text-white py-2 rounded"
           >
             Submit Order

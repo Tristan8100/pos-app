@@ -21,6 +21,7 @@ export default function ProductsCreate({ createProductService }: ProductsCreateP
           name: "",
           image_path: "",
           price: 0,
+          limited_quantity: 0
     })
 
     const [ingredients, setIngredients] = useState<IngredientForm[]>([])
@@ -39,7 +40,7 @@ export default function ProductsCreate({ createProductService }: ProductsCreateP
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!file) {
-            return
+            throw new Error('No file selected')
         }
         await createProductService(form, file, ingredients)
 
@@ -48,6 +49,7 @@ export default function ProductsCreate({ createProductService }: ProductsCreateP
             name: '',
             image_path: '',
             price: 0,
+            limited_quantity: 0
         })
     }
 
@@ -73,6 +75,15 @@ export default function ProductsCreate({ createProductService }: ProductsCreateP
                     value={form.price}
                     onChange={handleChange}
                     placeholder="Price"
+                />
+
+                <div>Limited Quantity</div>
+                <Input
+                    name="limited_quantity"
+                    type="number"
+                    value={form.limited_quantity}
+                    onChange={handleChange}
+                    placeholder="Limited Quantity"
                 />
 
                 <Input

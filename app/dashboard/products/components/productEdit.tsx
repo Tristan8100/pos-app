@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input"
 import { Inventory } from "../../inventory/types/inventory.types"
 import { useInventory } from "../../inventory/hooks/inventory.hooks"
 import { useState } from "react"
+import { Product } from "../types/products.type"
 
 interface ProductEditProps {
-  form: any
-  setForm: (val: any) => void
+  form: Product
+  setForm: (val: Product) => void
 
   file: File | null
   setFile: (file: File | null) => void
@@ -85,6 +86,17 @@ export default function ProductEdit({
         value={form.price || ""}
         onChange={(e) =>
           setForm({ ...form, price: Number(e.target.value) })
+        }
+      />
+
+      {/* Quantity */}
+      <div>limited quantity</div>
+      <Input
+        placeholder="Quantity"
+        type="number"
+        value={form.limited_quantity}
+        onChange={(e) =>
+          setForm({ ...form, limited_quantity: Number(e.target.value) })
         }
       />
 

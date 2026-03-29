@@ -38,7 +38,7 @@ export default function ProductsList({ products, handleEditOpen }: Props) {
                             )}
                             {/* Price badge */}
                             <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-md">
-                                ₱{product.price.toFixed(2)}
+                                ₱{product.price.toFixed(2)} Current Stock: {product.limited_quantity}
                             </div>
                         </div>
 

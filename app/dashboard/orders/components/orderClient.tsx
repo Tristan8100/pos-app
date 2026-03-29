@@ -25,12 +25,19 @@ export function OrdersClient() {
     fetchAndSetData,
     handleSubmit
   } = ordersHooks()
+
+  
   const { data, refetch, loading, setData } = useInventory()
 
   useEffect(() => {
     fetchAndSetData()
     refetch()
   }, [])
+
+  async function refresh() {
+    fetchAndSetData()
+    refetch()
+  }
   
 
   return (
@@ -51,7 +58,7 @@ export function OrdersClient() {
               >
                 <CardHeader>
                   <CardTitle className="text-lg">
-                    {product.name}
+                    {product.name} Current Stock: {product.limited_quantity}
                   </CardTitle>
                 </CardHeader>
 
@@ -81,7 +88,7 @@ export function OrdersClient() {
       </div>
 
       {/* za right*/}
-      <OrderSummary orders={orders} setOrders={setOrders} handleSubmit={() => handleSubmit(orders, refetch)} />
+      <OrderSummary orders={orders} setOrders={setOrders} handleSubmit={(orders, total) => handleSubmit(orders, total, refresh)} />
     </div>
   )
 }

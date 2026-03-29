@@ -16,6 +16,14 @@ export interface Order {
   staff_id: string
   created_at?: string
   status: string
+  total: number
+  // items: OrderItem[]
+  // addons: OrderAddon[]
+  products: ProductAdded[]
+}
+export interface ProductAdded {
+  id: string
+  name: string
   items: OrderItem[]
   addons: OrderAddon[]
 }
