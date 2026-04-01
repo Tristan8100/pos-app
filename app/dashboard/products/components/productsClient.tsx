@@ -15,6 +15,7 @@ import {
 
 import { Product } from "../types/products.type"
 import ProductsList from "./productsList"
+import { categoryHooks } from "../../category/hooks/category.hooks"
 
 export default function ProductsClient() {
   const {
@@ -24,6 +25,8 @@ export default function ProductsClient() {
     updateProductService,
     fetchAndSetData
   } = useProducts()
+
+  const { category, fetchCategories, setCategoryName } = categoryHooks()
 
   const [open, setOpen] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
@@ -35,6 +38,7 @@ export default function ProductsClient() {
 
   useEffect(() => {
     fetchAndSetData()
+    fetchCategories()
   }, []) //added since the hook also used in create, which will double call.
 
   if (loading) return <div>Loading...</div>
@@ -84,6 +88,7 @@ export default function ProductsClient() {
           </DialogHeader>
 
           <ProductsCreate
+            category={category}
             createProductService={async (form, file, ingredients) => {
               await createProductService(form, file, ingredients)
               setOpen(false)
@@ -107,6 +112,7 @@ export default function ProductsClient() {
               setFile={setFile}
               ingredients={ingredients}
               setIngredients={setIngredients}
+              category={category}
             />
           )}
 

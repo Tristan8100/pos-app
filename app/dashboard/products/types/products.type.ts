@@ -1,3 +1,4 @@
+import { FetchCategories } from "../../category/types/category.types";
 import { Inventory } from "../../inventory/types/inventory.types";
 
 export type IngredientForm = Omit<Ingredient, 'id' | 'product_id'>
@@ -28,4 +29,6 @@ export interface Product {
   price: number
   limited_quantity: number
   product_ingredients?: ProductIngredient[]
+  category_id?: string
+  category?: FetchCategories
 }

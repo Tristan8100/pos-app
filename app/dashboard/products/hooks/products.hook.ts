@@ -2,6 +2,7 @@
 import { getProducts, createProduct, uploadImage, addIngredients, deleteImage, updateProduct, deleteIngredients } from '../services/products.service'
 import { useState, useEffect } from 'react'
 import { IngredientForm, Product } from '../types/products.type'
+import { getCategories } from '../../category/services/category.service'
 
 export function useProducts() {
     const [products, setProducts] = useState<Product[]>([])

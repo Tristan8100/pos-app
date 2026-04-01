@@ -21,6 +21,9 @@ export async function getProducts() {
           image_path,
           quantity
         )
+      ),
+      category (
+        *
       )
     `)
 

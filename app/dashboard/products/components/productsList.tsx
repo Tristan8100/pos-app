@@ -92,6 +92,18 @@ export default function ProductsList({ products, handleEditOpen }: Props) {
                                 </div>
                             )}
 
+                            <div>
+                            {/* Category */}
+                            {product.category && (
+                                <div className="flex items-center justify-between pt-2 border-t border-border">
+                                    <span className="text-muted-foreground text-xs">Category</span>
+                                    <span className="text-muted-foreground text-xs font-mono">
+                                        {product.category.category_name}
+                                    </span>
+                                </div>
+                            )}
+                            </div>
+
                             {/* Edit Button */}
                             <button
                                 onClick={() => handleEditOpen(product)}
