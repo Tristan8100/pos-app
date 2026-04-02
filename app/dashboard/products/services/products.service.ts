@@ -28,24 +28,35 @@ export async function getProducts() {
     `)
 
   if (error) {
-    console.error(error)
-    return []
+    console.error('Error fetching products:', error.message)
+    throw new Error(error.message)
   }
 
   return data || []
 }
 
 export async function getOneProduct(id: string) {
-    const { data } = await createClient().from('products').select('*').eq('id', id).single()
+    const { data, error } = await createClient().from('products').select('*').eq('id', id).single()
+
+    if (error) {
+      console.error('Error fetching one product:', error.message)
+      throw new Error(error.message)
+    }
+
     return data
 }
 
 export async function uploadImage(file: File) {
   const filePath = `products/${Date.now()}-${file.name}`
 
-  const { error } = await supabase.storage
+  const { data, error } = await supabase.storage
     .from(BUCKET)
     .upload(filePath, file)
+
+  if (error) {
+    console.error('Error uploading image on product:', error.message)
+    throw new Error(error.message)
+  }
 
   if (error) throw error
 
@@ -53,34 +64,74 @@ export async function uploadImage(file: File) {
 }
 
 export async function deleteImage(path: string) {
-  const { error } = await supabase.storage
+  const { data, error } = await supabase.storage
     .from(BUCKET)
     .remove([path])
 
-  if (error) throw error
+  if (error) {
+    console.error('Error deleting image on product:', error.message)
+    throw new Error(error.message)
+  }
+
+  return data
 }
 
 export async function createProduct(payload: Omit<Product, 'id' | 'image_path'>) {
-  return supabase.from('products').insert([payload]).select().single()
+  const { data, error } = await supabase.from('products').insert([payload]).select().single()
+
+  if (error) {
+    console.error('Error creating product:', error.message)
+    throw new Error(error.message)
+  }
+
+  return data
 }
 
-export async function addIngredients(data: Omit<Ingredient, 'id'>[]) {//should be an array of objects
-  return supabase.from('product_ingredients').insert(data)
+export async function addIngredients(payload: Omit<Ingredient, 'id'>[]) {//should be an array of objects
+  const { data, error } = await supabase.from('product_ingredients').insert(payload)
+
+  if (error) {
+    console.error('Error adding ingredients:', error.message)
+    throw new Error(error.message)
+  }
+
+  return data
 }
 
 export async function deleteIngredients(productId: string) {
-  return supabase
+  const { data, error } = await supabase
     .from('product_ingredients')
     .delete()
     .eq('product_id', productId)
+
+  if (error) {
+    console.error('Error deleting ingredients:', error.message)
+    throw new Error(error.message)
+  }
+
+  return data
 }
 
 export async function updateProduct(id: string, payload: any) {
-  return supabase.from('products').update(payload).eq('id', id)
+  const { data, error } = await supabase.from('products').update(payload).eq('id', id)
+
+  if (error) {
+    console.error('Error updating product:', error.message)
+    throw new Error(error.message)
+  }
+
+  return data
 }
 
 export async function deleteProduct(id: string) {
-  return supabase.from('products').delete().eq('id', id)
+  const { data, error } = await supabase.from('products').delete().eq('id', id)
+
+  if (error) {
+    console.error('Error deleting product:', error.message)
+    throw new Error(error.message)
+  }
+
+  return data
 }
 
 export function getImageUrl(path: string) {

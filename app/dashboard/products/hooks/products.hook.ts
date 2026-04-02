@@ -7,6 +7,7 @@ import { getCategories } from '../../category/services/category.service'
 export function useProducts() {
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const fetchProducts = async () => {
         const res = await getProducts()
@@ -15,9 +16,14 @@ export function useProducts() {
 
     async function fetchAndSetData() {
         setLoading(true)
-        const res = await fetchProducts()
-        setProducts(res)
-        setLoading(false)
+        try {
+            const res = await fetchProducts()
+            setProducts(res)
+        } catch (err: any) {
+            setError(err?.message)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const createProductService = async (
@@ -25,58 +31,78 @@ export function useProducts() {
         file: File,
         ingredients: IngredientForm[]
     ) => {
-        const image_path = await uploadImage(file)
-        const payload_new = { ...payload, image_path }
+        try {
+            const image_path = await uploadImage(file)
+            const payload_new = { ...payload, image_path }
 
-        const { data, error } = await createProduct(payload_new)
-        if (error || !data) throw error
+            const data = await createProduct(payload_new)
 
-        const newData = ingredients.map(ingredient => ({
-            ...ingredient,
-            product_id: data.id
-        }))
+            console.log(data)
 
-        await addIngredients(newData)
+            const newData = ingredients.map(ingredient => ({
+                ...ingredient,
+                product_id: data.id
+            }))
 
-        fetchAndSetData()
+            await addIngredients(newData)
+            await fetchAndSetData()
+        } catch (err: any) {
+            setError(err?.message || err)
+            throw err
+        }
     }
 
     const updateProductService = async (
-    id: string,
-    payload: Omit<Product, 'id' | 'image_path'>,
-    file: File | null,
-    ingredients: IngredientForm[],
-    currentImagePath?: string
-  ) => {
-    let image_path = currentImagePath
+        id: string,
+        payload: Omit<Product, 'id' | 'image_path'>,
+        file: File | null,
+        ingredients: IngredientForm[],
+        currentImagePath?: string
+    ) => {
+        try {
+            let image_path = currentImagePath
 
-    if (file) {
-      const newPath = await uploadImage(file)
+            if (file) {
+                const newPath = await uploadImage(file)
 
-      if (currentImagePath) {
-        await deleteImage(currentImagePath)
-      }
+                if (currentImagePath) {
+                    await deleteImage(currentImagePath)
+                }
 
-      image_path = newPath
+                image_path = newPath
+            }
+
+            await updateProduct(id, {
+                ...payload,
+                image_path
+            })
+
+            await deleteIngredients(id)
+
+            const mapped = ingredients.map(i => ({
+                product_id: id,
+                inventory_id: i.inventory_id,
+                quantity: i.quantity
+            }))
+
+            await addIngredients(mapped)
+            await fetchAndSetData()
+        } catch (err: any) {
+            setError(err.message)
+            throw err
+        }
     }
 
-    await updateProduct(id, {
-      ...payload,
-      image_path
-    })
-
-    await deleteIngredients(id)
-
-    const mapped = ingredients.map(i => ({
-      product_id: id,
-      inventory_id: i.inventory_id,
-      quantity: i.quantity
-    }))
-
-    await addIngredients(mapped)
-
-    await fetchAndSetData()
-  }
-
-    return { products, fetchProducts, createProductService, loading, setLoading, updateProductService, fetchAndSetData, setProducts }
+    return { 
+        products, 
+        fetchProducts, 
+        createProductService, 
+        loading, 
+        setLoading, 
+        updateProductService, 
+        fetchAndSetData, 
+        setProducts,
+        error, // new added
+        setError
+    }
 }
