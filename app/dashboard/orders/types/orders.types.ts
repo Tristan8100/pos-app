@@ -2,11 +2,13 @@ import { Product, ProductIngredient } from "../../products/types/products.type"
 
 export interface OrderItem {
   productId: string
+  name: string
   quantity: number
 }
 
 export interface OrderAddon {
   productId: string
+  name: string
   quantity: number
   price: number
 }

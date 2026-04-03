@@ -5,14 +5,16 @@ import { useInventory } from "../../inventory/hooks/inventory.hooks"
 import { Input } from "@/components/ui/input"
 import ProductsInventoryList from "./productsInventoryList"
 import { FetchCategories } from "../../category/types/category.types"
+import { Label } from "@/components/ui/label"
 
 interface ProductsCreateProps {
     createProductService: (payload: Omit<Product, 'id' | 'image_path'>, file: File, ingredients: IngredientForm[]) => Promise<void>
     category: FetchCategories[]
+    setError: (message: string) => void
 }
 
-export default function ProductsCreate({ createProductService, category }: ProductsCreateProps) {
-    const { data } = useInventory()
+export default function ProductsCreate({ createProductService, category, setError }: ProductsCreateProps) {
+    const { data: inventory } = useInventory()
     const [file, setFile] = useState<File | null>(null)
 
     const [form, setForm] = useState<Omit<Product, 'id'>>({
@@ -61,6 +63,14 @@ export default function ProductsCreate({ createProductService, category }: Produ
     }
 
     const handleAddIngredient = (data : Omit<Ingredient, 'id' | 'product_id'>) => {
+        if (ingredients.some(ingredient => ingredient.inventory_id === data.inventory_id)) {
+            console.log('Ingredient already added')
+            setError('Ingredient already added')
+            setIngredients([])
+            return //won't execute the rest
+            //throw new Error('Ingredient already added')
+            //should set error
+        }
         setIngredients(prev => [...prev, data])
     }
 
@@ -94,6 +104,16 @@ export default function ProductsCreate({ createProductService, category }: Produ
                     </select>
                 </div>
 
+                <div>
+                    <label className="text-sm font-medium">Ingredients</label>
+                    {ingredients.map((ingredient, index) => (
+                        <div key={index}>
+                            {ingredient.inventory_id}: {ingredient.name} - {ingredient.quantity}
+                        </div>
+                    ))}
+                </div>
+
+                <Label>Price</Label>
                 <Input
                     name="price"
                     type="number"
@@ -102,6 +122,7 @@ export default function ProductsCreate({ createProductService, category }: Produ
                     placeholder="Price"
                 />
 
+                <Label>Stocks</Label> {/* probably remove idk since stocks adding is different functionalities */}
                 <Input
                     name="limited_quantity"
                     type="number"
@@ -122,7 +143,7 @@ export default function ProductsCreate({ createProductService, category }: Produ
 
             <div className="mt-8">
                 <h2 className="font-bold">Ingredients Available...</h2>
-                <ProductsInventoryList addIngredients={handleAddIngredient} data={data} />
+                <ProductsInventoryList addIngredients={handleAddIngredient} inventory={inventory} />
             </div>
         </div>
     )

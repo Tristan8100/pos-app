@@ -39,14 +39,16 @@ export function ordersHooks() {
         name: order.product.name,
 
         items: order.items.map((ingredient) => ({
-        productId: ingredient.inventory.id,
-        quantity: ingredient.quantity,
+            productId: ingredient.inventory.id,
+            quantity: ingredient.quantity,
+            name: ingredient.inventory.name,
         })),
 
         addons: order.addons.map((addon) => ({
-        productId: addon.inventory.id,
-        quantity: addon.quantity,
-        price: addon.inventory.price_per_serving,
+            productId: addon.inventory.id,
+            quantity: addon.quantity,
+            price: addon.inventory.price_per_serving,
+            name: addon.inventory.name
         })),
     }))
 

@@ -139,6 +139,7 @@ export default function ProductsClient() {
                 <ProductsCreate
                   category={category}
                   createProductService={handleCreateProduct}
+                  setError={setError}
                 />
               </DialogContent>
             </Dialog>

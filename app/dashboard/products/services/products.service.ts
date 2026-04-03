@@ -87,7 +87,8 @@ export async function createProduct(payload: Omit<Product, 'id' | 'image_path'>)
   return data
 }
 
-export async function addIngredients(payload: Omit<Ingredient, 'id'>[]) {//should be an array of objects
+export async function addIngredients(payload: Omit<Ingredient, 'id' | 'name'>[]) {//should be an array of objects
+  console.log("ZA PAYLOAD", payload)
   const { data, error } = await supabase.from('product_ingredients').insert(payload)
 
   if (error) {

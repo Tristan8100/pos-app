@@ -5,6 +5,7 @@ export type IngredientForm = Omit<Ingredient, 'id' | 'product_id'>
 
 export interface Ingredient {
   id: string;
+  name: string;
   product_id: string;
   inventory_id: string;
   quantity: number;

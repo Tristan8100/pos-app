@@ -1,7 +1,7 @@
 'use client'
 import { getProducts, createProduct, uploadImage, addIngredients, deleteImage, updateProduct, deleteIngredients } from '../services/products.service'
 import { useState, useEffect } from 'react'
-import { IngredientForm, Product } from '../types/products.type'
+import { Ingredient, IngredientForm, Product } from '../types/products.type'
 import { getCategories } from '../../category/services/category.service'
 
 export function useProducts() {
@@ -39,7 +39,7 @@ export function useProducts() {
 
             console.log(data)
 
-            const newData = ingredients.map(ingredient => ({
+            const newData: Omit<Ingredient, 'name' | 'id'>[] = ingredients.map(({name, ...ingredient}) => ({ //prevent name to send
                 ...ingredient,
                 product_id: data.id
             }))
@@ -84,6 +84,8 @@ export function useProducts() {
                 inventory_id: i.inventory_id,
                 quantity: i.quantity
             }))
+
+            console.log("MAPPED", mapped)
 
             await addIngredients(mapped)
             await fetchAndSetData()
