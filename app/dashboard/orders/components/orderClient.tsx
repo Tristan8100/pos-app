@@ -11,6 +11,7 @@ import { OrderSummary } from "./orderSummary"
 import { ordersHooks } from "../hooks/orders.hooks"
 import { useInventory } from "../../inventory/hooks/inventory.hooks"
 import { ref } from "node:process"
+import { useShift } from "../../shift/hooks/useShift"
 
 export function OrdersClient() {
   const { 
@@ -23,28 +24,43 @@ export function OrdersClient() {
     handleOpen,
     handleAddOrder,
     fetchAndSetData,
-    handleSubmit
+    handleSubmit,
+    givenChange,
+    setGivenChange,
+    receivedPayment,
+    setReceivedPayment,
+    total,
+    setTotal
   } = ordersHooks()
 
+  const { activeShift, refreshShift } = useShift()//use activeShift to destructure since no state of expected cashsss
+
   
-  const { data, refetch, loading, setData } = useInventory()
+  const { data, refetch, loading: loadingInventory, setData } = useInventory()
 
   useEffect(() => {
     fetchAndSetData()
+    refreshShift()
     refetch()
   }, [])
 
   async function refresh() {
     fetchAndSetData()
+    refreshShift()
     refetch()
   }
-  
+
+  if (loadingInventory) return <div>Loading...</div>
+
+  if (!activeShift) return <div>NO SHIFT!!!!!</div>
 
   return (
     <div className="flex">
       {/* left*/}
       <div className="flex-1 p-4">
         <h1 className="text-2xl font-bold mb-4">Orders Page</h1>
+        <div>{activeShift && new Date(activeShift.start_time).toLocaleString()}</div>
+        <div>PHP: {activeShift?.expected_cash}</div>
 
         {products.length === 0 ? (
           <p>No products found.</p>
@@ -88,7 +104,18 @@ export function OrdersClient() {
       </div>
 
       {/* za right*/}
-      <OrderSummary orders={orders} setOrders={setOrders} handleSubmit={(orders, total) => handleSubmit(orders, total, refresh)} />
+      <OrderSummary 
+        orders={orders} 
+        setOrders={setOrders}
+        setTotal={setTotal}
+        total={total}
+        receivedPayment={receivedPayment} 
+        setReceivedPayment={setReceivedPayment} 
+        givenChange={givenChange}
+        setGivenChange={setGivenChange}
+        expectedCash={activeShift?.expected_cash}
+        handleSubmit={() => handleSubmit(refresh)}
+      /> {/* handleSubmit(orders, total, refresh) */}
     </div>
   )
 }

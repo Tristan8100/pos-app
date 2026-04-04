@@ -6,7 +6,10 @@ const BUCKET = 'pos-bucker'
 export const supabase = createClient()
 
 export async function createOrder(
-  payload: Omit<Order, 'id' | 'created_at' | 'staff_id' | 'status'>
+  payload: Omit<Order, 'id' | 'created_at' | 'staff_id' | 'status'>,
+  payload2: {givenChange: number, receivedPayment: number} 
+  //givenChange: is the change you give, receivedPayment: is the payment 
+  // you receive like total is 60 they gave you receivedPayment: 100, your givenChange is 40
 ) {
   const { data: userData, error: userError } = await supabase.auth.getUser()
   const user = userData?.user
@@ -119,11 +122,26 @@ export async function createOrder(
   // 8. Insert order
   const { data: orderData, error: orderError } = await supabase
     .from('orders')
-    .insert([{ ...payload, staff_id: user.id, status: 'pending' }])
+    .insert([{ ...payload, ...payload2, staff_id: user.id, status: 'pending' }])
     .select()
     .single()
 
   if (orderError) throw orderError
+
+  // 9. Get shift
+  const { data: shift, error: shiftError } = await supabase
+    .from('shifts')
+    .select('*')
+    .eq('staff_id', user.id)
+    .eq('status', 'OPEN')
+    .single()
+
+  if (shiftError) throw shiftError
+
+  const {data, error: shiftUpdateError} = await supabase.from('shifts').update({ expected_cash: shift.expected_cash + orderData.total }).eq('staff_id', user.id).eq('status', 'OPEN')
+  console.log('datas', data)
+
+  if (shiftUpdateError) throw shiftUpdateError
 
   return orderData
 }
