@@ -104,7 +104,7 @@ export async function endShift(shiftId: string, countedCash: number) {
   return { ...data, countedCash }
 }
 
-export async function getShiftsByStaff(startDate?: string, endDate?: string) {
+export async function getAllAuthUserShift(startDate?: string, endDate?: string) {
   const staffId = await getAuthenticatedStaffId()
 
   let query = supabase

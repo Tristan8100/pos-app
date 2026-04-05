@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import ShiftList from "./shiftList"
 
 export default function ShiftClient() {
   const { activeShift, loading, refreshShift, handleStart, handleEnd, cash, setCash, submitting } = useShift()
@@ -48,6 +49,10 @@ export default function ShiftClient() {
                 <span className="font-mono">${activeShift.starting_cash}</span>
               </div>
               <div className="flex justify-between">
+                <span>Expected Cash:</span>
+                <span className="font-mono">${activeShift.expected_cash}</span>
+              </div>
+              <div className="flex justify-between">
                 <span>Status:</span>
                 <span className="text-green-600 font-bold">{activeShift.status}</span>
               </div>
@@ -76,6 +81,8 @@ export default function ShiftClient() {
           )}
         </CardFooter>
       </Card>
+
+      <ShiftList />
     </div>
   )
 }
