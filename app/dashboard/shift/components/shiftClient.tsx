@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import ShiftList from "./shiftList"
 
 export default function ShiftClient() {
   const { activeShift, loading, refreshShift, handleStart, handleEnd, cash, setCash, submitting } = useShift()
@@ -81,8 +80,6 @@ export default function ShiftClient() {
           )}
         </CardFooter>
       </Card>
-
-      <ShiftList />
     </div>
   )
 }
