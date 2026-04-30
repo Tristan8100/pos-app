@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 export default function ShiftClient() {
-  const { activeShift, loading, refreshShift, handleStart, handleEnd, cash, setCash, submitting } = useShift()
+  const { activeShift, loading, refreshShift, handleStart, handleEnd, cash, setCash, submitting, error, setError } = useShift()
   
   useEffect(() => { refreshShift() }, [])
 
@@ -24,6 +24,7 @@ export default function ShiftClient() {
             {activeShift 
               ? `Started at ${new Date(activeShift.start_time).toLocaleTimeString()}`
               : "Enter your starting cash to begin your shift."}
+              {error && <div className="border border-red-500">{error.message}</div>}
           </CardDescription>
         </CardHeader>
         

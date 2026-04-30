@@ -7,26 +7,48 @@ export function categoryHooks() {
     const [category, setCategory] = useState<FetchCategories[] | []>([])
     const [categoryName, setCategoryName] = useState('')
 
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<any>(null)
+
     const fetchCategories = async () => {
-        const res = await getCategories()
-        setCategory(res)
+        setLoading(true)
+        setError(null)
+        try {
+            const res = await getCategories()
+            setCategory(res)
+        } catch (error) {
+            console.log(error)
+            setError(error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const createCategoryService = async () => {
+        setLoading(true)
+        setError(null)
         try {
             await createCategory({ category_name: categoryName })
             fetchCategories()
         } catch (error) {
             console.log(error)
+            setError(error)
+        } finally {
+            setLoading(false)
         }
     }
 
     const updateCategoryService = async (id: string) => {
+        setLoading(true)
+        setError(null)
         try {
             await updateCategory(id, { category_name: categoryName })
             fetchCategories()
         } catch (error) {
             console.log(error)
+            setError(error)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -35,6 +57,8 @@ export function categoryHooks() {
         setCategory,
         categoryName,
         setCategoryName,
+        loading,
+        error,
         createCategoryService,
         updateCategoryService,
         fetchCategories

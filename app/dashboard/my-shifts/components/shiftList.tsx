@@ -4,12 +4,15 @@ import { Shift } from "../../shift/types/shift.types"
 import MyShiftsHooks from "../hooks/my-shifts.hooks"
 
 export default function ShiftList() {
-    const {shifts, fetchShifts, setShifts} = MyShiftsHooks()
+    const {shifts, fetchShifts, setShifts, loading, error} = MyShiftsHooks()
 
     const formatDate = (date?: string) => {
         if (!date) return "—"
         return new Date(date).toLocaleString()
     }
+
+    if (loading) return <div>Loading...</div>
+    if (error) return <div>Error: {error.message}</div>
 
     return (
         <div className="p-6">

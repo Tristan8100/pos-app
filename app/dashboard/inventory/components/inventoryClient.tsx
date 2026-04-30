@@ -18,7 +18,7 @@ import {
 import { Button } from '@/components/ui/button'
 
 export default function InventoryClient() {
-  const { data, saveItem, removeItem, loading } = useInventory()
+  const { data, saveItem, removeItem, loading, error } = useInventory()
 
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<Inventory | null>(null)
@@ -89,6 +89,13 @@ export default function InventoryClient() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* ERROR DISPLAY */}
+      {error && (
+        <div className="p-3 border border-red-500 text-red-500 rounded">
+          {error.message || 'Something went wrong'}
+        </div>
+      )}
 
       {/* LIST */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

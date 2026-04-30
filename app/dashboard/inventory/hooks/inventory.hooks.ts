@@ -14,10 +14,17 @@ import {
 export function useInventory() {
   const [data, setData] = useState<Inventory[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<any>(null)
 
   const fetchData = async () => {
-    const res = await getInventory()
-    setData(res)
+    setError(null)
+    try {
+      const res = await getInventory()
+      setData(res)
+    } catch (error) {
+      console.log(error)
+      setError(error)
+    }
   }
 
   useEffect(() => {
@@ -30,6 +37,7 @@ export function useInventory() {
     editing: Inventory | null
   ) => {
     setLoading(true)
+    setError(null)
 
     try {
       let image_path = editing?.image_path || null
@@ -50,23 +58,37 @@ export function useInventory() {
       }
 
       await fetchData()
+    } catch (error) {
+      console.log(error)
+      setError(error)
     } finally {
       setLoading(false)
     }
   }
 
   const removeItem = async (item: Inventory) => {
-    if (item.image_path) {
-      await deleteImage(item.image_path)
-    }
+    setLoading(true)
+    setError(null)
 
-    await deleteInventory(item.id)
-    await fetchData()
+    try {
+      if (item.image_path) {
+        await deleteImage(item.image_path)
+      }
+
+      await deleteInventory(item.id)
+      await fetchData()
+    } catch (error) {
+      console.log(error)
+      setError(error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return {
     data,
     loading,
+    error,
     saveItem,
     removeItem,
     refetch: fetchData,

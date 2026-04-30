@@ -5,25 +5,58 @@ const BUCKET = 'pos-bucker'
 export const supabase = createClient()
 
 export async function getInventory() {
-  const { data } = await supabase.from('inventory').select('*').order('name', { ascending: false })
+  const { data, error } = await supabase
+    .from('inventory')
+    .select('*')
+    .order('name', { ascending: false })
+
+  if (error) throw error
+
   return data || []
 }
 
 export async function getOneInventory(id: string) {
-  const { data } = await supabase.from('inventory').select('*').eq('id', id).single()
+  const { data, error } = await supabase
+    .from('inventory')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) throw error
+
   return data || {} //not tested
 }
 
 export async function createInventory(payload: InventoryCreate) {
-  return supabase.from('inventory').insert(payload)
+  const { data, error } = await supabase
+    .from('inventory')
+    .insert(payload)
+
+  if (error) throw error
+
+  return data
 }
 
 export async function updateInventory(id: string, payload: InventoryCreate) {
-  return supabase.from('inventory').update(payload).eq('id', id)
+  const { data, error } = await supabase
+    .from('inventory')
+    .update(payload)
+    .eq('id', id)
+
+  if (error) throw error
+
+  return data
 }
 
 export async function deleteInventory(id: string) {
-  return supabase.from('inventory').delete().eq('id', id)
+  const { data, error } = await supabase
+    .from('inventory')
+    .delete()
+    .eq('id', id)
+
+  if (error) throw error
+
+  return data
 }
 
 export async function uploadImage(file: File) {
@@ -39,9 +72,17 @@ export async function uploadImage(file: File) {
 }
 
 export async function deleteImage(path: string) {
-  return supabase.storage.from(BUCKET).remove([path])
+  const { data, error } = await supabase.storage
+    .from(BUCKET)
+    .remove([path])
+
+  if (error) throw error
+
+  return data
 }
 
 export function getImageUrl(path: string) {
-  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl
+  return supabase.storage
+    .from(BUCKET)
+    .getPublicUrl(path).data.publicUrl
 }

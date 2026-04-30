@@ -14,7 +14,17 @@ import {
 import { Input } from "@/components/ui/input"
 
 export function CategoryClient() {
-  const { category, fetchCategories, categoryName, setCategoryName, createCategoryService, updateCategoryService } = categoryHooks()
+  const { 
+    category, 
+    fetchCategories, 
+    categoryName, 
+    setCategoryName, 
+    createCategoryService, 
+    updateCategoryService,
+    error,
+    loading
+  } = categoryHooks()
+
   const [isOpen, setIsOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<{id: string, name: string} | null>(null)
 
@@ -37,6 +47,19 @@ export function CategoryClient() {
   return (
     <div className="p-4">
       <h1>Category</h1>
+
+      {/* ERROR DISPLAY */}
+      {error && (
+        <div className="mb-4 p-2 border border-red-500 text-red-500 rounded">
+          {error.message || 'Something went wrong'}
+        </div>
+      )}
+      
+      {loading && (
+        <div className="mb-2 text-sm text-gray-500">
+          Loading...
+        </div>
+      )}
 
       {/* Category List */}
       <div className="space-y-2 mb-4">
@@ -61,12 +84,14 @@ export function CategoryClient() {
             placeholder="New Category Name" 
           />
           <DialogFooter>
-            <Button onClick={() => createCategoryService()}>Save</Button>
+            <Button onClick={() => createCategoryService()} disabled={loading}>
+              Save
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* EDIT DIALOG (Fixed: One dialog controlled by selection) */}
+      {/* EDIT DIALOG */}
       <Dialog open={!!editingItem} onOpenChange={(open) => !open && setEditingItem(null)}>
         <DialogContent>
           <DialogHeader><DialogTitle>Edit Category</DialogTitle></DialogHeader>
@@ -75,7 +100,7 @@ export function CategoryClient() {
             onChange={(e) => setCategoryName(e.target.value)}
           />
           <DialogFooter className="gap-2">
-            <Button onClick={handleUpdate}>Update</Button>
+            <Button onClick={handleUpdate} disabled={loading}>Update</Button>
             <Button variant="ghost" onClick={() => setEditingItem(null)}>Cancel</Button>
           </DialogFooter>
         </DialogContent>
