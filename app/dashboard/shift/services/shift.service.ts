@@ -136,3 +136,30 @@ export async function getShiftSummary(shiftId: string) {
 
   return shift
 }
+
+export async function getZReading(shiftId: string) {
+  const staffId = await getAuthenticatedStaffId()
+
+  const { data: shift, error } = await supabase
+    .from('shifts')
+    .select('*')
+    .eq('id', shiftId)
+    .eq('staff_id', staffId)
+    .single()
+
+  if (error) {
+    console.error("Error fetching shift:", error.message)
+    throw new Error("Shift not found or access denied.")
+  }
+
+  const { data: orders, error: ordersError } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('shift_id', shift.id)// can put user_id
+    .order('created_at', { ascending: false })
+
+  if (ordersError) throw new Error(ordersError.message)
+
+  return orders
+
+}

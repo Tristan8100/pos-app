@@ -119,16 +119,7 @@ export async function createOrder(
     if (error) throw error
   }
 
-  // 8. Insert order
-  const { data: orderData, error: orderError } = await supabase
-    .from('orders')
-    .insert([{ ...payload, ...payload2, staff_id: user.id, status: 'pending' }])
-    .select()
-    .single()
-
-  if (orderError) throw orderError
-
-  // 9. Get shift
+  // 8. Get shift
   const { data: shift, error: shiftError } = await supabase
     .from('shifts')
     .select('*')
@@ -138,6 +129,17 @@ export async function createOrder(
 
   if (shiftError) throw shiftError
 
+  // 9. Insert order
+  const { data: orderData, error: orderError } = await supabase
+    .from('orders')
+    .insert([{ ...payload, ...payload2, staff_id: user.id, status: 'pending', shift_id: shift.id }])// added to get z reading
+    .select()
+    .single()
+
+  if (orderError) throw orderError
+
+  
+  // 10. Update expected cash
   const {data, error: shiftUpdateError} = await supabase.from('shifts').update({ expected_cash: shift.expected_cash + orderData.total }).eq('staff_id', user.id).eq('status', 'OPEN')
   console.log('datas', data)
 

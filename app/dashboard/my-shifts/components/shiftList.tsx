@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { getAllAuthUserShift } from "../../shift/services/shift.service"
 import { Shift } from "../../shift/types/shift.types"
 import MyShiftsHooks from "../hooks/my-shifts.hooks"
+import Link from "next/link"
 
 export default function ShiftList() {
     const {shifts, fetchShifts, setShifts, loading, error} = MyShiftsHooks()
@@ -80,6 +81,7 @@ export default function ShiftList() {
                                     ₱{shift.difference ?? 0}
                                 </span>
                             </p>
+                            <Link className="text-blue-500" href={`/dashboard/my-shifts/${shift.id}`}>View Shift</Link>
                         </div>
                     </div>
                 ))}

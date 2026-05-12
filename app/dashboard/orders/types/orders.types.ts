@@ -23,6 +23,19 @@ export interface Order {
   // addons: OrderAddon[]
   products: ProductAdded[]
 }
+
+export interface ZReading {
+  id: string;
+  staff_id: string;
+  created_at: string;
+  products: ProductAdded[];
+  status: string;
+  total: number;
+  givenChange: number;
+  receivedPayment: number;
+  shift_id: string | null;
+}
+
 export interface ProductAdded {
   id: string
   name: string
