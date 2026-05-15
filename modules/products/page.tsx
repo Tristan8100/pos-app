@@ -1,4 +1,4 @@
-import ProductsClient from "@/modules/products/components/productsClient"
+import ProductsClient from "./components/productsClient";
 
 export default function ProductsPage() {
     return (

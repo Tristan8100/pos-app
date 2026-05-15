@@ -1,6 +1,6 @@
 'use client'
-import ShiftList from "@/modules/my-shifts/components/shiftList";
-import ShiftTransaction from "@/modules/my-shifts/components/shiftTransaction";
+import ShiftList from "./components/shiftList";
+import ShiftTransaction from "./components/shiftTransaction";
 
 export default function MyShiftsPage() {
     return (

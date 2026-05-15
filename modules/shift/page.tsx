@@ -1,4 +1,4 @@
-import ShiftClient from "@/modules/shift/components/shiftClient";
+import ShiftClient from "./components/shiftClient";
 
 export default function ShiftPage() {
     return (

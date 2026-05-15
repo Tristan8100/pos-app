@@ -1,4 +1,4 @@
-import StaffsClient from "@/modules/staffs/components/staffsClient";
+import StaffsClient from "./components/staffsClient";
 
 
 export default function StaffsPage() {

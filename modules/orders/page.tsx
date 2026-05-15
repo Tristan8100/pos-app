@@ -1,4 +1,4 @@
-import { OrdersClient } from "@/modules/orders/components/orderClient"
+import { OrdersClient } from "./components/orderClient";
 
 export default function OrdersPage() {
     return <>

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
-import MyShiftsHooks from "../hooks/my-shifts.hooks";
+import MyShiftsHooks from "@/modules/my-shifts/hooks/my-shifts.hooks";
 import { Card } from "@/components/ui/card";
 
 export default function MyShiftsPage() {

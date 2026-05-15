@@ -1,4 +1,4 @@
-import { CategoryClient } from "@/modules/category/components/categoryClient";
+import { CategoryClient } from "./components/categoryClient";
 
 export default function CategoryPage() {
     return (

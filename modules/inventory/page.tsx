@@ -1,4 +1,4 @@
-import InventoryClient from "@/modules/inventory/components/inventoryClient"
+import InventoryClient from "./components/inventoryClient";
 
 export default function InventoryPage() {
     return <><InventoryClient /></>
