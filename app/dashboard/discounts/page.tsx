@@ -1,7 +1,9 @@
+import DiscountClient from "@/modules/discount/components/discountClient";
+
 export default function DiscountsPage() {
     return (
         <div>
-            <h1>Discounts</h1>
+            <DiscountClient />
         </div>
     );
 }
