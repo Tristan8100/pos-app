@@ -1,4 +1,4 @@
-import { getDiscount, createDiscount } from "../services/discount.service";
+import { getDiscount, createDiscount, updateDiscount, deleteDiscount } from "../services/discount.service";
 import { useState } from "react";
 import { Discount, DiscountCreate } from "../types/discount.types";
 
@@ -23,9 +23,30 @@ export default function useDiscounts() {
         }
     }
 
+    const update = async (data: Discount) => {
+        try{
+            const discount = await updateDiscount(data.id, data)
+            fetchDiscounts()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const deleteRecord = async (id: string) => {
+        try{
+            const discount = await deleteDiscount(id)
+            fetchDiscounts()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return {
         discounts,
+        setDiscounts,
         fetchDiscounts,
-        create
+        create,
+        update,
+        deleteRecord
     }
 }

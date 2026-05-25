@@ -15,11 +15,13 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Discount } from "@/modules/discount/types/discount.types"
 
 export function OrderSummary({
   orders,
   setOrders,
   setTotal,
+  discounts,
   total,
   receivedPayment,
   setReceivedPayment,
@@ -33,6 +35,7 @@ export function OrderSummary({
   setTotal: React.Dispatch<React.SetStateAction<number>>
   total: number
   receivedPayment: number
+  discounts: Discount[]
   setReceivedPayment: React.Dispatch<React.SetStateAction<number>>
   givenChange: number
   setGivenChange: React.Dispatch<React.SetStateAction<number>>
@@ -55,6 +58,8 @@ export function OrderSummary({
     await handleSubmit()
 
   }
+
+  console.log("discounts", discounts)
 
   const handleChangeComputation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = Number(e.target.value); //use to get new value, useState is async idk
@@ -181,6 +186,19 @@ export function OrderSummary({
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          <div>
+            {discounts && discounts.map((discount) => (
+              <div key={discount.id} className="border p-2 rounded space-y-2">
+                <div className="flex justify-between">
+                  <p className="font-semibold">{discount.name}</p>
+                </div>
+                <p className="font-bold">-{discount.discount}%</p>
+                <p className="font-bold">₱{discount.remove_vat ? "remove vat" : "with vat"}</p>
+              </div>
+            ))}
+            ryiyieyieyi
+          </div>
         </div>
       )}
     </div>

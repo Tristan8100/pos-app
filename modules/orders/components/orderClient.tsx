@@ -12,6 +12,7 @@ import { ordersHooks } from "../hooks/orders.hooks"
 import { useInventory } from "../../inventory/hooks/inventory.hooks"
 import { ref } from "node:process"
 import { useShift } from "../../shift/hooks/useShift"
+import useDiscounts from "@/modules/discount/hooks/useDiscounts"
 
 export function OrdersClient() {
   const { 
@@ -35,12 +36,15 @@ export function OrdersClient() {
 
   const { activeShift, refreshShift } = useShift()//use activeShift to destructure since no state of expected cashsss
 
+  const { discounts, setDiscounts, fetchDiscounts } = useDiscounts()
+
   
   const { data, refetch, loading: loadingInventory, setData } = useInventory()
 
   useEffect(() => {
     fetchAndSetData()
     refreshShift()
+    fetchDiscounts()
     refetch()
   }, [])
 
@@ -108,6 +112,7 @@ export function OrdersClient() {
         orders={orders} 
         setOrders={setOrders}
         setTotal={setTotal}
+        discounts={discounts}
         total={total}
         receivedPayment={receivedPayment} 
         setReceivedPayment={setReceivedPayment} 
