@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Product, ProductIngredient } from "../../products/types/products.type"
-import { Order, SelectedOrderItem } from "../types/orders.types"
+import { DiscountItem, Order, SelectedOrderItem } from "../types/orders.types"
 import { createOrder } from "../services/orders.service"
 import { ordersHooks } from "../hooks/orders.hooks"
 import { 
@@ -28,7 +28,9 @@ export function OrderSummary({
   givenChange,
   setGivenChange,
   expectedCash,
-  handleSubmit
+  handleSubmit,
+  discountsItems, //new
+  setDiscountsItems //new
 }: {
   orders: SelectedOrderItem[]
   setOrders: React.Dispatch<React.SetStateAction<SelectedOrderItem[]>>
@@ -41,9 +43,32 @@ export function OrderSummary({
   setGivenChange: React.Dispatch<React.SetStateAction<number>>
   expectedCash: number | undefined
   handleSubmit: () => void
+  discountsItems: DiscountItem[]
+  setDiscountsItems: React.Dispatch<React.SetStateAction<DiscountItem[]>>
 }) {
 
   const [cashDrawer, setCashDrawer] = useState(0)
+
+  const [productId, setProductId] = useState('')
+  const [discountSelected, setDiscountSelected] = useState<Discount | null>(null)
+
+  const addDiscount = async () => {
+    const discounted = discounts.find(d => d.id === discountSelected?.id)
+    if(!discounted) {
+      throw new Error('Discount not found')
+    }
+
+    if(productId === '') {
+      throw new Error('Please select a product')
+    }
+
+    setDiscountsItems(prev => [...prev, { productId: productId, discount: discounted }])
+  }
+
+  useEffect(() => { //logger
+  }, [discountSelected])
+
+  console.log("DISCOUNTS ITEMS", discountsItems) // remove!!!!!!
 
   const handlePayment = async (grandTotal: number) => {
     setTotal(grandTotal) //set total to grand total
@@ -104,7 +129,7 @@ export function OrderSummary({
             const total = calculateItemTotal(item)
             return (
               <div key={index} className="border p-2 rounded space-y-2">
-                <div className="flex justify-between">
+                <div className="flex justify-center items-center flex-col">
                   <p className="font-semibold">{item.product.name}</p>
                   <button
                     onClick={() => handleRemove(index)}
@@ -112,6 +137,12 @@ export function OrderSummary({
                   >
                     Remove
                   </button>
+                  <button onClick={() => setProductId(item.product.id)}>add to discount</button>
+                  <div>
+                    {productId === item.product.id && (
+                      <div>selected</div>
+                    )}
+                  </div>
                 </div>
                 <div className="text-sm">
                   {item.addons.length === 0 ? (
@@ -134,6 +165,11 @@ export function OrderSummary({
 
           <div className="border-t pt-2 font-bold">
             Grand Total: ₱{total}
+          </div>
+          <div className="border-t pt-2 font-bold">
+            {productId !== "" && discountSelected &&
+              <button onClick={() => addDiscount()}>add discount</button>
+            }
           </div>
 
           {/* PAYMENT DIALOG */}
@@ -195,6 +231,12 @@ export function OrderSummary({
                 </div>
                 <p className="font-bold">-{discount.discount}%</p>
                 <p className="font-bold">₱{discount.remove_vat ? "remove vat" : "with vat"}</p>
+                <button onClick={() => setDiscountSelected(discount)}>add discount</button>
+                <div>
+                  {discountSelected?.id === discount.id && (
+                    <div>selected</div>
+                  )}
+                </div>
               </div>
             ))}
             ryiyieyieyi

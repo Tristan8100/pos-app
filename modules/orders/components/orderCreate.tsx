@@ -13,6 +13,7 @@ import { Product, ProductIngredient } from "../../products/types/products.type"
 import { useInventory } from "../../inventory/hooks/inventory.hooks"
 import { Input } from "@/components/ui/input"
 import { Inventory } from "../../inventory/types/inventory.types"
+import { Discount } from "@/modules/discount/types/discount.types"
 
 interface Props {
   open: boolean

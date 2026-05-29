@@ -31,7 +31,9 @@ export function OrdersClient() {
     receivedPayment,
     setReceivedPayment,
     total,
-    setTotal
+    setTotal,
+    discountsItems,
+    setDiscountsItems
   } = ordersHooks()
 
   const { activeShift, refreshShift } = useShift()//use activeShift to destructure since no state of expected cashsss
@@ -120,6 +122,8 @@ export function OrdersClient() {
         setGivenChange={setGivenChange}
         expectedCash={activeShift?.expected_cash}
         handleSubmit={() => handleSubmit(refresh)}
+        discountsItems={discountsItems}
+        setDiscountsItems={setDiscountsItems}
       /> {/* handleSubmit(orders, total, refresh) */}
     </div>
   )

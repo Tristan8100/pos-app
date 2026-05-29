@@ -1,3 +1,4 @@
+import { Discount } from "@/modules/discount/types/discount.types"
 import { Product, ProductIngredient } from "../../products/types/products.type"
 
 export interface OrderItem {
@@ -39,6 +40,8 @@ export interface ZReading {
 export interface ProductAdded {
   id: string
   name: string
+  price: number
+  discount?: Discount
   items: OrderItem[]
   addons: OrderAddon[]
 }
@@ -47,4 +50,9 @@ export interface SelectedOrderItem { //for state only, too limited if use Order
   product: Product
   items: ProductIngredient[]
   addons: Omit<ProductIngredient, 'quantity_stock'>[]
+}
+
+export interface DiscountItem {
+  productId: string
+  discount: Discount
 }
