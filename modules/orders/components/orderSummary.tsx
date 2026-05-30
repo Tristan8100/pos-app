@@ -100,12 +100,27 @@ export function OrderSummary({
     setOrders((prev) => prev.filter((_, i) => i !== index))
   }
 
+
   const calculateItemTotal = (item: SelectedOrderItem) => {
     const base = item.product.price
     const addons = item.addons.reduce((sum, addon) => {
       return sum + addon.inventory.price_per_serving * addon.quantity
     }, 0)
-    return base + addons
+
+    let total = 0;
+
+    //discount calculation
+    if(productId === item.product.id && discountSelected) {
+      const discounted = discounts.find(d => d.id === discountSelected.id)
+      if(!discounted) {
+        throw new Error('Discount not found')
+      }
+      total = base + addons - (base + addons) * (discounted.discount/100)
+    } else {
+      total = base + addons
+    }
+
+    return total
   }
 
   const processTotal = orders.reduce((sum, item) => sum + calculateItemTotal(item), 0)
@@ -114,7 +129,7 @@ export function OrderSummary({
     console.log("ORDERS", orders)
     setTotal(processTotal)
     setCashDrawer(expectedCash || 0)
-  }, [orders, setTotal, expectedCash])
+  }, [orders, setTotal, expectedCash, productId, discountSelected]) // added productId and discountSelected to trigger discount calculateItemTotal
 
   return (
     <div className="w-80 border-l p-4">

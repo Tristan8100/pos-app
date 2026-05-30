@@ -55,7 +55,7 @@ export function ordersHooks() {
         return {
             id: order.product.id,
             name: order.product.name,
-            price: order.product.price, //newly added
+            price: order.product.price, //newly added //already deducted
             discount: disc?.discount,            
 
             items: order.items.map((ingredient) => ({
