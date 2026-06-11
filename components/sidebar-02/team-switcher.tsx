@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,22 +16,20 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ChevronsUpDown, Plus } from "lucide-react";
+import {
+  ChevronsUpDown,
+  Plus,
+  Settings,
+  Users,
+  CreditCard,
+  LifeBuoy,
+} from "lucide-react";
 import * as React from "react";
+import { Logo } from "./logo";
 
-type Team = {
-  name: string;
-  logo: React.ElementType;
-  plan: string;
-};
-
-export function TeamSwitcher({ teams }: { teams: Team[] }) {
+export function TeamSwitcher() {
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
 
-  if (!activeTeam) return null;
-
-  const Logo = activeTeam.logo;
 
   return (
     <SidebarMenu>
@@ -44,15 +43,20 @@ export function TeamSwitcher({ teams }: { teams: Team[] }) {
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-background text-foreground">
                 <Logo className="size-4" />
               </div>
+
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {activeTeam.name}
+                  user
                 </span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                <span className="truncate text-xs">
+                  user
+                </span>
               </div>
+
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg mb-4"
             align="start"
@@ -62,25 +66,49 @@ export function TeamSwitcher({ teams }: { teams: Team[] }) {
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Teams
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
-                </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
             <DropdownMenuSeparator />
+
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Workspace
+            </DropdownMenuLabel>
+
+            <DropdownMenuItem asChild>
+              <Link href="/settings" className="flex items-center gap-2">
+                <Settings className="size-4" />
+                Settings
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link href="/members" className="flex items-center gap-2">
+                <Users className="size-4" />
+                Members
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link href="/billing" className="flex items-center gap-2">
+                <CreditCard className="size-4" />
+                Billing
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link href="/support" className="flex items-center gap-2">
+                <LifeBuoy className="size-4" />
+                Support
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
             <DropdownMenuItem className="gap-2 p-2">
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
               </div>
-              <div className="font-medium text-muted-foreground">Add team</div>
+              <div className="font-medium text-muted-foreground">
+                Add team
+              </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
