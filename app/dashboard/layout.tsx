@@ -4,9 +4,13 @@ import { DashboardSidebar } from "@/components/sidebar-02/app-sidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useStaffs } from "modules/staffs/hooks/staffs.hooks"
+import { useEffect } from "react";
 
 export default function Sidebar02({children}: {children: React.ReactNode}) {
     const isMobile = useIsMobile()
+
+    
 
   return (
     <SidebarProvider>

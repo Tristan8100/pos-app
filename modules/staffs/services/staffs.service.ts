@@ -80,3 +80,12 @@ export const createStaff = async (data: any) => {
 
   return createdData || {}
 }
+
+//Auth Staff
+export const fetchAuthStaff = async () => {
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const id = user?.id
+
+  return fetchOneStaff(id as string)
+}

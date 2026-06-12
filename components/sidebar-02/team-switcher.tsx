@@ -26,10 +26,17 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { Logo } from "./logo";
+import { useStaffs } from "@/modules/staffs/hooks/staffs.hooks";
+import { useEffect } from "react";
 
 export function TeamSwitcher() {
   const { isMobile } = useSidebar();
 
+  const { authStaff, loadAuthStaff } = useStaffs()
+    
+  useEffect(() => {
+    loadAuthStaff()
+  }, [])
 
   return (
     <SidebarMenu>
@@ -46,10 +53,10 @@ export function TeamSwitcher() {
 
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  user
+                  {authStaff?.full_name}
                 </span>
                 <span className="truncate text-xs">
-                  user
+                  {authStaff?.email}
                 </span>
               </div>
 
