@@ -13,6 +13,8 @@ import { useInventory } from "../../inventory/hooks/inventory.hooks"
 import { ref } from "node:process"
 import { useShift } from "../../shift/hooks/useShift"
 import useDiscounts from "@/modules/discount/hooks/useDiscounts"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export function OrdersClient() {
   const { 
@@ -33,7 +35,9 @@ export function OrdersClient() {
     total,
     setTotal,
     discountsItems,
-    setDiscountsItems
+    setDiscountsItems,
+    search, //from useProducts
+    setSearch //from useProducts
   } = ordersHooks()
 
   const { activeShift, refreshShift } = useShift()//use activeShift to destructure since no state of expected cashsss
@@ -67,6 +71,7 @@ export function OrdersClient() {
         <h1 className="text-2xl font-bold mb-4">Orders Page</h1>
         <div>{activeShift && new Date(activeShift.start_time).toLocaleString()}</div>
         <div>PHP: {activeShift?.expected_cash}</div>
+        <div><Input value={search} onChange={(e) => setSearch(e.target.value)} /> <Button onClick={refresh}>Refresh</Button></div>
 
         {products.length === 0 ? (
           <p>No products found.</p>

@@ -6,8 +6,10 @@ const BUCKET = 'pos-bucker'
 
 export const supabase = createClient()
 
-export async function getProducts() {
-  const { data, error } = await createClient()
+export async function getProducts(search?: string) {
+
+
+  let query = createClient()
     .from('products')
     .select(`
       *,
@@ -26,6 +28,12 @@ export async function getProducts() {
         *
       )
     `)
+
+  if (search) {
+    query = query.textSearch('name', `'${search}'`)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     console.error('Error fetching products:', error.message)

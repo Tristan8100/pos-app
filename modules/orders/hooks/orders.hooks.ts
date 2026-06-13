@@ -6,7 +6,7 @@ import { createOrder } from "../services/orders.service"
 import { Discount } from "@/modules/discount/types/discount.types"
 
 export function ordersHooks() {
-    const { fetchAndSetData, products } = useProducts()
+    const { fetchAndSetData, products, search, setSearch } = useProducts()
     
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
     const [open, setOpen] = useState(false)
@@ -114,6 +114,8 @@ export function ordersHooks() {
         total,
         setTotal,
         discountsItems, //new
-        setDiscountsItems //new
+        setDiscountsItems, //new
+        search, //from products
+        setSearch //from products
     }
 }

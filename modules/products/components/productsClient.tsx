@@ -14,6 +14,7 @@ import {
 import { IngredientForm, Product } from "../types/products.type"
 import ProductsList from "./productsList"
 import { categoryHooks } from "../../category/hooks/category.hooks"
+import { Input } from "@/components/ui/input"
 
 export default function ProductsClient() {
   const {
@@ -23,7 +24,9 @@ export default function ProductsClient() {
     setError,
     createProductService,
     updateProductService,
-    fetchAndSetData
+    fetchAndSetData,
+    search,
+    setSearch
   } = useProducts()
 
   const { category, fetchCategories } = categoryHooks()
@@ -116,6 +119,8 @@ export default function ProductsClient() {
             <h1 className="text-3xl font-bold tracking-tight">Products</h1>
             <p className="text-muted-foreground text-sm">Manage your inventory items and recipes.</p>
           </div>
+
+          <div><Input placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} /></div>
           
           <div className="flex gap-3">
             <button

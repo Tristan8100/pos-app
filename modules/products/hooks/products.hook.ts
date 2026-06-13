@@ -8,9 +8,10 @@ export function useProducts() {
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [search, setSearch] = useState('')
 
     const fetchProducts = async () => {
-        const res = await getProducts()
+        const res = await getProducts(search)//for search appending
         return res
     }
 
@@ -105,6 +106,8 @@ export function useProducts() {
         fetchAndSetData, 
         setProducts,
         error, // new added
-        setError
+        setError,
+        search,
+        setSearch
     }
 }
