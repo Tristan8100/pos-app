@@ -15,6 +15,7 @@ import { IngredientForm, Product } from "../types/products.type"
 import ProductsList from "./productsList"
 import { categoryHooks } from "../../category/hooks/category.hooks"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export default function ProductsClient() {
   const {
@@ -26,7 +27,9 @@ export default function ProductsClient() {
     updateProductService,
     fetchAndSetData,
     search,
-    setSearch
+    setSearch,
+    selectedCategory, //id
+    setSelectedCategory //id
   } = useProducts()
 
   const { category, fetchCategories } = categoryHooks()
@@ -149,6 +152,13 @@ export default function ProductsClient() {
               </DialogContent>
             </Dialog>
           </div>
+        </div>
+
+        <div>{category && category.map(c => 
+          <Button key={c.id} className={`border hover:bg-gray-500 transition-all active:scale-95 ${selectedCategory === c.id ? "bg-green-500" : ""}`} onClick={() => setSelectedCategory(c.id === selectedCategory ? "" : c.id)}>
+            <div>{c.category_name}</div>
+          </Button>
+          )}
         </div>
 
         {/* ERR */}

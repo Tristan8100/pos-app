@@ -6,7 +6,7 @@ const BUCKET = 'pos-bucker'
 
 export const supabase = createClient()
 
-export async function getProducts(search?: string) {
+export async function getProducts(search?: string, category?: string) {
 
 
   let query = createClient()
@@ -31,6 +31,10 @@ export async function getProducts(search?: string) {
 
   if (search) {
     query = query.textSearch('name', `'${search}'`)
+  }
+
+  if (category) {
+    query = query.eq('category_id', category)
   }
 
   const { data, error } = await query

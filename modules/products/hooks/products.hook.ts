@@ -9,9 +9,10 @@ export function useProducts() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [search, setSearch] = useState('')
+    const [selectedCategory, setSelectedCategory] = useState('') //id
 
     const fetchProducts = async () => {
-        const res = await getProducts(search)//for search appending
+        const res = await getProducts(search, selectedCategory)//for search appending
         return res
     }
 
@@ -108,6 +109,8 @@ export function useProducts() {
         error, // new added
         setError,
         search,
-        setSearch
+        setSearch,
+        selectedCategory,
+        setSelectedCategory
     }
 }

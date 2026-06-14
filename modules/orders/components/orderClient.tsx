@@ -15,6 +15,7 @@ import { useShift } from "../../shift/hooks/useShift"
 import useDiscounts from "@/modules/discount/hooks/useDiscounts"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { categoryHooks } from "@/modules/category/hooks/category.hooks"
 
 export function OrdersClient() {
   const { 
@@ -37,27 +38,30 @@ export function OrdersClient() {
     discountsItems,
     setDiscountsItems,
     search, //from useProducts
-    setSearch //from useProducts
+    setSearch, //from useProducts
+    setSelectedCategory,
+    selectedCategory
   } = ordersHooks()
 
   const { activeShift, refreshShift } = useShift()//use activeShift to destructure since no state of expected cashsss
 
   const { discounts, setDiscounts, fetchDiscounts } = useDiscounts()
 
+  const { category, fetchCategories } = categoryHooks()
+
   
   const { data, refetch, loading: loadingInventory, setData } = useInventory()
 
   useEffect(() => {
-    fetchAndSetData()
-    refreshShift()
-    fetchDiscounts()
-    refetch()
+    refresh()
   }, [])
 
   async function refresh() {
     fetchAndSetData()
     refreshShift()
     refetch()
+    fetchDiscounts()
+    fetchCategories()
   }
 
   if (loadingInventory) return <div>Loading...</div>
@@ -72,6 +76,19 @@ export function OrdersClient() {
         <div>{activeShift && new Date(activeShift.start_time).toLocaleString()}</div>
         <div>PHP: {activeShift?.expected_cash}</div>
         <div><Input value={search} onChange={(e) => setSearch(e.target.value)} /> <Button onClick={refresh}>Refresh</Button></div>
+        <div>
+          {category.map((category) => (
+            <Button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id === selectedCategory ? "" : category.id)}
+              className={`mr-2 ${
+                selectedCategory === category.id ? "bg-blue-500 text-white" : ""
+              }`}
+            >
+              {category.category_name}
+            </Button>
+          ))}
+        </div>
 
         {products.length === 0 ? (
           <p>No products found.</p>
