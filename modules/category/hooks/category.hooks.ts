@@ -2,20 +2,29 @@
 import { useEffect, useState } from "react"
 import { createCategory, getCategories, updateCategory } from "../services/category.service"
 import { FetchCategories } from "../types/category.types"
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from "@/lib/store";
+import { setCategoryValue } from "../feature/store";
 
 export function categoryHooks() {
+    const categoryState = useSelector((state : RootState) => state.category.value);
     const [category, setCategory] = useState<FetchCategories[] | []>([])
     const [categoryName, setCategoryName] = useState('')
+    const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<any>(null)
 
-    const fetchCategories = async () => {
+    const fetchCategories = async (isRedux?: boolean) => {
         setLoading(true)
         setError(null)
         try {
-            const res = await getCategories()
-            setCategory(res)
+            const res : FetchCategories[] = await getCategories()
+            if (isRedux) {
+                dispatch(setCategoryValue(res))
+            } else {
+                setCategory(res)
+            }
         } catch (error) {
             console.log(error)
             setError(error)

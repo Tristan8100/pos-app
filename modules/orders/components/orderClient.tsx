@@ -16,6 +16,8 @@ import useDiscounts from "@/modules/discount/hooks/useDiscounts"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { categoryHooks } from "@/modules/category/hooks/category.hooks"
+import { useSelector } from "react-redux"
+import { RootState } from "@/lib/store"
 
 export function OrdersClient() {
   const { 
@@ -47,7 +49,12 @@ export function OrdersClient() {
 
   const { discounts, setDiscounts, fetchDiscounts } = useDiscounts()
 
-  const { category, fetchCategories } = categoryHooks()
+  const { 
+    //category, 
+    fetchCategories 
+  } = categoryHooks()
+
+  const category = useSelector((state : RootState) => state.category.value);
 
   
   const { data, refetch, loading: loadingInventory, setData } = useInventory()
@@ -61,7 +68,7 @@ export function OrdersClient() {
     refreshShift()
     refetch()
     fetchDiscounts()
-    fetchCategories()
+    fetchCategories(true) //isRedux to get from redux, supports legacy code
   }
 
   if (loadingInventory) return <div>Loading...</div>
@@ -77,7 +84,7 @@ export function OrdersClient() {
         <div>PHP: {activeShift?.expected_cash}</div>
         <div><Input value={search} onChange={(e) => setSearch(e.target.value)} /> <Button onClick={refresh}>Refresh</Button></div>
         <div>
-          {category.map((category) => (
+          {category && category.map((category) => (
             <Button
               key={category.id}
               onClick={() => setSelectedCategory(category.id === selectedCategory ? "" : category.id)}
