@@ -16,12 +16,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Discount } from "@/modules/discount/types/discount.types"
+import { useSelector } from "react-redux"
+import { RootState } from "@/lib/store"
 
 export function OrderSummary({
   orders,
   setOrders,
   setTotal,
-  discounts,
   total,
   receivedPayment,
   setReceivedPayment,
@@ -37,7 +38,6 @@ export function OrderSummary({
   setTotal: React.Dispatch<React.SetStateAction<number>>
   total: number
   receivedPayment: number
-  discounts: Discount[]
   setReceivedPayment: React.Dispatch<React.SetStateAction<number>>
   givenChange: number
   setGivenChange: React.Dispatch<React.SetStateAction<number>>
@@ -46,6 +46,8 @@ export function OrderSummary({
   discountsItems: DiscountItem[]
   setDiscountsItems: React.Dispatch<React.SetStateAction<DiscountItem[]>>
 }) {
+
+  const discounts = useSelector((state: RootState) => state.discount.value) ?? []
 
   const [cashDrawer, setCashDrawer] = useState(0)
 

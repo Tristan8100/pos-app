@@ -47,7 +47,7 @@ export function OrdersClient() {
 
   const { activeShift, refreshShift } = useShift()//use activeShift to destructure since no state of expected cashsss
 
-  const { discounts, setDiscounts, fetchDiscounts } = useDiscounts()
+  const { fetchDiscounts } = useDiscounts()
 
   const { 
     //category, 
@@ -67,7 +67,7 @@ export function OrdersClient() {
     fetchAndSetData()
     refreshShift()
     refetch()
-    fetchDiscounts()
+    fetchDiscounts(true)
     fetchCategories(true) //isRedux to get from redux, supports legacy code
   }
 
@@ -143,7 +143,6 @@ export function OrdersClient() {
         orders={orders} 
         setOrders={setOrders}
         setTotal={setTotal}
-        discounts={discounts}
         total={total}
         receivedPayment={receivedPayment} 
         setReceivedPayment={setReceivedPayment} 
