@@ -38,7 +38,7 @@ export function categoryHooks() {
         setError(null)
         try {
             await createCategory({ category_name: categoryName })
-            fetchCategories()
+            fetchCategories(true)
         } catch (error) {
             console.log(error)
             setError(error)
@@ -52,7 +52,7 @@ export function categoryHooks() {
         setError(null)
         try {
             await updateCategory(id, { category_name: categoryName })
-            fetchCategories()
+            fetchCategories(true)
         } catch (error) {
             console.log(error)
             setError(error)

@@ -1,14 +1,23 @@
 import { getDiscount, createDiscount, updateDiscount, deleteDiscount } from "../services/discount.service";
 import { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/lib/store';
+import { setDiscountValue } from '../feature/store';
 import { Discount, DiscountCreate } from "../types/discount.types";
 
 export default function useDiscounts() {
+    const discountState = useSelector((state: RootState) => state.discount.value);
+    const dispatch = useDispatch();
     const [discounts, setDiscounts] = useState<Discount[]>([])
 
-    const fetchDiscounts = async () => {
+    const fetchDiscounts = async (isRedux?: boolean) => {
         try {
             const discounts = await getDiscount()
-            setDiscounts(discounts)
+            if (isRedux) {
+                dispatch(setDiscountValue(discounts))
+            } else {
+                setDiscounts(discounts)
+            }
         } catch (error) {
             console.log(error)
         }
@@ -16,8 +25,8 @@ export default function useDiscounts() {
 
     const create = async (data: DiscountCreate) => {
         try{
-            const discount = await createDiscount(data)
-            fetchDiscounts()
+            await createDiscount(data)
+            fetchDiscounts(true)
         } catch (error) {
             console.log(error)
         }
@@ -25,8 +34,8 @@ export default function useDiscounts() {
 
     const update = async (data: Discount) => {
         try{
-            const discount = await updateDiscount(data.id, data)
-            fetchDiscounts()
+            await updateDiscount(data.id, data)
+            fetchDiscounts(true)
         } catch (error) {
             console.log(error)
         }
@@ -34,14 +43,15 @@ export default function useDiscounts() {
 
     const deleteRecord = async (id: string) => {
         try{
-            const discount = await deleteDiscount(id)
-            fetchDiscounts()
+            await deleteDiscount(id)
+            fetchDiscounts(true)
         } catch (error) {
             console.log(error)
         }
     }
 
     return {
+        discountState,
         discounts,
         setDiscounts,
         fetchDiscounts,

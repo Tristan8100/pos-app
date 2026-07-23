@@ -45,7 +45,7 @@ export default function ProductsClient() {
 
   useEffect(() => {
     fetchAndSetData()
-    fetchCategories()
+    fetchCategories(true)
   }, [])
 
   // Clear error when switching views/modals to prevent ghost errors

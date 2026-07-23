@@ -2,18 +2,19 @@
 import CreateDiscount from "./createDiscount";
 import useDiscounts from "../hooks/useDiscounts";
 import { useEffect } from "react";
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
 import EditDiscount from "./editDiscount";
 import { Button } from "@/components/ui/button";
 import { DeleteDiscount } from "./deleteDiscount";
 
 export default function DiscountClient() {
-    const { discounts, fetchDiscounts, create, update, deleteRecord } = useDiscounts();
+    const { fetchDiscounts, create, update, deleteRecord } = useDiscounts();
+    const discounts = useSelector((state: RootState) => state.discount.value) ?? [];
 
     useEffect(() => {
-        fetchDiscounts();
+        fetchDiscounts(true);
     }, []);
-
-    console.log(discounts)
 
 
     return (

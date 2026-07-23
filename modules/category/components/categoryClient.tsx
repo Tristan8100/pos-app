@@ -12,10 +12,11 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { RootState } from "@/lib/store"
+import { useSelector } from "react-redux"
 
 export function CategoryClient() {
   const { 
-    category, 
     fetchCategories, 
     categoryName, 
     setCategoryName, 
@@ -25,11 +26,13 @@ export function CategoryClient() {
     loading
   } = categoryHooks()
 
+  const category = useSelector((state : RootState) => state.category.value);
+
   const [isOpen, setIsOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<{id: string, name: string} | null>(null)
 
   useEffect(() => {
-    fetchCategories()
+    fetchCategories(true) //true isRedux
   }, [])
 
   const handleEditOpen = (item: any) => {
