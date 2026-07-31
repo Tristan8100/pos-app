@@ -1,52 +1,42 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import { Product, ProductIngredient } from "../../products/types/products.type"
-import { DiscountItem, Order, SelectedOrderItem } from "../types/orders.types"
-import { createOrder } from "../services/orders.service"
-import { ordersHooks } from "../hooks/orders.hooks"
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import { SelectedOrderItem } from "../types/orders.types"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
-  DialogFooter 
+  DialogFooter
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Discount } from "@/modules/discount/types/discount.types"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/lib/store"
+import {
+  addDiscountItem,
+  removeOrderAtIndex,
+  setGivenChangeValue,
+  setOrderTotal,
+  setOrdersValue,
+  setReceivedPaymentValue,
+} from "../feature/store"
 
 export function OrderSummary({
-  orders,
-  setOrders,
-  setTotal,
-  total,
-  receivedPayment,
-  setReceivedPayment,
-  givenChange,
-  setGivenChange,
   expectedCash,
   handleSubmit,
-  discountsItems, //new
-  setDiscountsItems //new
 }: {
-  orders: SelectedOrderItem[]
-  setOrders: React.Dispatch<React.SetStateAction<SelectedOrderItem[]>>
-  setTotal: React.Dispatch<React.SetStateAction<number>>
-  total: number
-  receivedPayment: number
-  setReceivedPayment: React.Dispatch<React.SetStateAction<number>>
-  givenChange: number
-  setGivenChange: React.Dispatch<React.SetStateAction<number>>
   expectedCash: number | undefined
   handleSubmit: () => void
-  discountsItems: DiscountItem[]
-  setDiscountsItems: React.Dispatch<React.SetStateAction<DiscountItem[]>>
 }) {
-
+  const dispatch = useDispatch()
+  const orders = useSelector((state: RootState) => state.orders.orders)
+  const total = useSelector((state: RootState) => state.orders.total)
+  const receivedPayment = useSelector((state: RootState) => state.orders.receivedPayment)
+  const givenChange = useSelector((state: RootState) => state.orders.givenChange)
+  const discountsItems = useSelector((state: RootState) => state.orders.discountsItems)
   const discounts = useSelector((state: RootState) => state.discount.value) ?? []
 
   const [cashDrawer, setCashDrawer] = useState(0)
@@ -64,7 +54,7 @@ export function OrderSummary({
       throw new Error('Please select a product')
     }
 
-    setDiscountsItems(prev => [...prev, { productId: productId, discount: discounted }])
+    dispatch(addDiscountItem({ productId: productId, discount: discounted }))
   }
 
   useEffect(() => { //logger
@@ -73,14 +63,14 @@ export function OrderSummary({
   console.log("DISCOUNTS ITEMS", discountsItems) // remove!!!!!!
 
   const handlePayment = async (grandTotal: number) => {
-    setTotal(grandTotal) //set total to grand total
+    dispatch(setOrderTotal(grandTotal))
     console.log("GRAND TOTAL", grandTotal)
     if(receivedPayment > cashDrawer) {
       throw new Error('Not enough cash in drawer') // NO CHANGE!!
     }
 
     console.log("HANDLE PAYMENT", receivedPayment, grandTotal)
-    setGivenChange(receivedPayment - grandTotal)
+    dispatch(setGivenChangeValue(receivedPayment - grandTotal))
 
     await handleSubmit()
 
@@ -93,13 +83,13 @@ export function OrderSummary({
     if(newValue > cashDrawer) {
       //throw new Error('Not enough cash in drawer') // NO CHANGE!!
     }
-    setReceivedPayment(newValue);
-    
-    setGivenChange(newValue - total);
+    dispatch(setReceivedPaymentValue(newValue));
+
+    dispatch(setGivenChangeValue(newValue - total));
   }
 
   const handleRemove = (index: number) => {
-    setOrders((prev) => prev.filter((_, i) => i !== index))
+    dispatch(removeOrderAtIndex(index))
   }
 
 
@@ -129,9 +119,9 @@ export function OrderSummary({
 
   useEffect(() => {
     console.log("ORDERS", orders)
-    setTotal(processTotal)
+    dispatch(setOrderTotal(processTotal))
     setCashDrawer(expectedCash || 0)
-  }, [orders, setTotal, expectedCash, productId, discountSelected]) // added productId and discountSelected to trigger discount calculateItemTotal
+  }, [orders, dispatch, expectedCash, productId, discountSelected])
 
   return (
     <div className="w-80 border-l p-4">

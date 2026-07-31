@@ -139,20 +139,10 @@ export function OrdersClient() {
       </div>
 
       {/* za right*/}
-      <OrderSummary 
-        orders={orders} 
-        setOrders={setOrders}
-        setTotal={setTotal}
-        total={total}
-        receivedPayment={receivedPayment} 
-        setReceivedPayment={setReceivedPayment} 
-        givenChange={givenChange}
-        setGivenChange={setGivenChange}
+      <OrderSummary
         expectedCash={activeShift?.expected_cash}
         handleSubmit={() => handleSubmit(refresh)}
-        discountsItems={discountsItems}
-        setDiscountsItems={setDiscountsItems}
-      /> {/* handleSubmit(orders, total, refresh) */}
+      />
     </div>
   )
 }
