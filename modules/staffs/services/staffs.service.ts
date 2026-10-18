@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
-import { StaffsDTO } from '../types/staffs.types'
+import { FetchStaff, StaffCreateDTO, StaffsDTO } from '../types/staffs.types'
 const BUCKET = 'pos-bucker'
 
 export const supabase = createClient()
@@ -65,20 +65,56 @@ export const deleteStaff = async (id: string) => {
   }
 }
 
-export const createStaff = async (data: any) => {
-  const { data: createdData, error } = await supabase
+
+export const createStaff = async (data: StaffCreateDTO) => {
+  const { email, password, full_name, role } = data
+
+  const existingStaff = await supabase
     .from('users')
-    .insert(data)
+    .select('id')
+    .eq('email', email)
     .single()
 
-  if (error) {
-    console.error('Error creating staff:', error.message)
-    throw new Error(error.message)
+  if (existingStaff.data) {
+    throw new Error('A staff member with this email already exists.')
   }
 
-  console.log('Created staff data:', createdData)
+  // 1. Create the Supabase Auth account
+  const { data: authData, error: authError } =
+    await supabase.auth.signUp({
+      email,
+      password,
+    })
 
-  return createdData || {}
+  if (authError) {
+    console.error('Error creating staff account:', authError.message)
+    throw new Error(authError.message)
+  }
+
+  const userId = authData.user?.id
+
+  if (!userId) {
+    throw new Error('Failed to retrieve the new user ID')
+  }
+
+  // 2. Insert the staff details using the Auth user's ID
+  const { data: createdData, error: staffError } = await supabase
+    .from('users')
+    .insert({
+      id: userId,
+      email,
+      full_name,
+      role,
+    })
+    .select()
+    .single()
+
+  if (staffError) {
+    console.error('Error creating staff details:', staffError.message)
+    throw new Error(staffError.message)
+  }
+
+  return createdData as FetchStaff
 }
 
 //Auth Staff

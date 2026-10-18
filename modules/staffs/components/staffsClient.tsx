@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { fetchStaffs, updateStaff } from '../services/staffs.service'
-import { FetchStaff } from '../types/staffs.types'
+import { useEffect } from 'react'
+import type { FetchStaff } from '../types/staffs.types'
 
 import {
   Dialog,
@@ -21,19 +20,26 @@ export default function StaffsClient() {
         loading,
         error,
         openEdit,
-        selectedStaff,
+        openCreate,
         form,
+        createForm,
+        creating,
+        createError,
         handleSaveEdit,
+        handleCreateStaff,
         loadStaffs,
         setOpenEdit,
+        setOpenCreate,
         setSelectedStaff,
-        setForm
+        setForm,
+        setCreateForm,
+        setCreateError
     } = useStaffs()
 
 
   useEffect(() => {
     loadStaffs()
-  }, [])
+  }, [loadStaffs])
 
   const handleEditClick = (staff: FetchStaff) => {
     setSelectedStaff(staff)
@@ -59,6 +65,13 @@ export default function StaffsClient() {
     })
   }
 
+  const handleCreateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCreateForm({
+      ...createForm,
+      [e.target.name]: e.target.value
+    })
+  }
+
   if (loading) return <p>Loading staffs...</p>
   if (error) return <p>Error: {error}</p>
 
@@ -66,6 +79,7 @@ export default function StaffsClient() {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold">Staffs</h1>
+        <Button onClick={() => setOpenCreate(true)}>Create Staff</Button>
       </div>
 
       {staffs.length === 0 ? (
@@ -85,6 +99,81 @@ export default function StaffsClient() {
           ))}
         </ul>
       )}
+
+      <Dialog
+        open={openCreate}
+        onOpenChange={(open) => {
+          setOpenCreate(open)
+          if (!open) setCreateError(null)
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Staff</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              void handleCreateStaff()
+            }}
+            className="space-y-3"
+          >
+            <Input
+              name="full_name"
+              value={createForm.full_name}
+              onChange={handleCreateChange}
+              placeholder="Full Name"
+              aria-label="Full name"
+              required
+            />
+            <Input
+              name="email"
+              type="email"
+              value={createForm.email}
+              onChange={handleCreateChange}
+              placeholder="Email"
+              aria-label="Email"
+              required
+            />
+            <Input
+              name="password"
+              type="password"
+              value={createForm.password}
+              onChange={handleCreateChange}
+              placeholder="Password"
+              aria-label="Password"
+              autoComplete="new-password"
+              required
+            />
+            <Select
+              value={createForm.role}
+              onValueChange={(role) => setCreateForm({ ...createForm, role })}
+            >
+              <SelectTrigger aria-label="Staff role" className="w-full">
+                <SelectValue placeholder="Select Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="cashier">Cashier</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
+            {createError && <p className="text-sm text-destructive">{createError}</p>}
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpenCreate(false)}
+                disabled={creating}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={creating}>
+                {creating ? 'Creating...' : 'Create'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/*Edit Modal */}
       <Dialog open={openEdit} onOpenChange={setOpenEdit}>

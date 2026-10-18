@@ -7,4 +7,6 @@ export interface FetchStaff {
     created_at: string
 }
 
-export interface StaffsDTO extends Omit<FetchStaff, 'created_at' | 'profile_path' | 'id' | 'email'> {}
+export type StaffsDTO = Omit<FetchStaff, 'created_at' | 'profile_path' | 'id' | 'email'>
+
+export type StaffCreateDTO = Pick<FetchStaff, 'email' | 'full_name' | 'role'> & { password: string }
