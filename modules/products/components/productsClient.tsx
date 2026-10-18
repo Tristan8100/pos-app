@@ -16,6 +16,8 @@ import ProductsList from "./productsList"
 import { categoryHooks } from "../../category/hooks/category.hooks"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { PageLayout } from "@/components/page-layout"
+import { Plus, RefreshCw, Search } from "lucide-react"
 
 export default function ProductsClient() {
   const {
@@ -110,36 +112,41 @@ export default function ProductsClient() {
     }
   }
 
-  if (loading && products.length === 0) {
-    return <div className="p-10 text-center font-medium animate-pulse">Loading products...</div>
-  }
-
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
-      <div className="flex flex-col gap-4 border-b pb-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Products</h1>
-            <p className="text-muted-foreground text-sm">Manage your inventory items and recipes.</p>
-          </div>
-
-          <div><Input placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} /></div>
-          
-          <div className="flex gap-3">
-            <button
-              onClick={fetchAndSetData}
-              className="px-4 py-2 border rounded-md text-sm font-medium hover:bg-slate-50 transition-all active:scale-95"
-            >
-              Refresh Data
-            </button>
-
+    <>
+      <PageLayout
+        title="Products"
+        description="Manage your inventory items and recipes."
+        badge={
+          !loading ? (
+            <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+              {products.length} {products.length === 1 ? "product" : "products"}
+            </span>
+          ) : null
+        }
+        actions={
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <div className="relative min-w-0 flex-1 sm:w-52">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search products"
+                aria-label="Search products"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Button variant="outline" onClick={fetchAndSetData}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Refresh
+            </Button>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <button className="bg-blue-600 text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 shadow-sm transition-all active:scale-95">
-                  + New Product
-                </button>
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  New Product
+                </Button>
               </DialogTrigger>
-
               <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-[600px]">
                 <DialogHeader>
                   <DialogTitle>Create Product</DialogTitle>
@@ -152,35 +159,49 @@ export default function ProductsClient() {
               </DialogContent>
             </Dialog>
           </div>
-        </div>
-
-        <div>{category && category.map(c => 
-          <Button key={c.id} className={`border hover:bg-gray-500 transition-all active:scale-95 ${selectedCategory === c.id ? "bg-green-500" : ""}`} onClick={() => setSelectedCategory(c.id === selectedCategory ? "" : c.id)}>
-            <div>{c.category_name}</div>
-          </Button>
-          )}
-        </div>
-
-        {/* ERR */}
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 animate-in fade-in slide-in-from-top-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-red-500 text-lg">⚠️</span>
-                <p className="text-red-700 text-sm font-medium">{error}</p>
-              </div>
-              <button 
-                onClick={() => setError(null)}
-                className="text-red-400 hover:text-red-600 text-xs font-bold uppercase tracking-widest"
+        }
+      >
+        {category.length > 0 && (
+          <div className="flex flex-wrap gap-2 border-b p-4 sm:px-6">
+            {category.map((c) => (
+              <Button
+                key={c.id}
+                variant={selectedCategory === c.id ? "default" : "outline"}
+                aria-pressed={selectedCategory === c.id}
+                onClick={() => setSelectedCategory(c.id === selectedCategory ? "" : c.id)}
               >
-                Dismiss
-              </button>
-            </div>
+                {c.category_name}
+              </Button>
+            ))}
           </div>
         )}
-      </div>
 
-      {/* UPDATE DIALOG */}
+        {error && (
+          <div
+            role="alert"
+            className="m-4 flex items-center justify-between gap-3 rounded-md border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive sm:mx-6"
+          >
+            <p>{error}</p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setError(null)}
+              className="shrink-0 text-destructive hover:text-destructive"
+            >
+              Dismiss
+            </Button>
+          </div>
+        )}
+
+        {loading && products.length === 0 ? (
+          <div className="p-10 text-center text-sm text-muted-foreground" aria-live="polite">
+            Loading products...
+          </div>
+        ) : (
+          <ProductsList products={products} handleEditOpen={handleEditOpen} />
+        )}
+      </PageLayout>
+
       <Dialog open={openEdit} onOpenChange={setOpenEdit}>
         <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-[600px]">
           <DialogHeader>
@@ -199,29 +220,20 @@ export default function ProductsClient() {
             />
           )}
 
-          <div className="flex justify-end gap-3 pt-6 border-t mt-6">
-            <button
+          <div className="mt-6 flex justify-end gap-3 border-t pt-6">
+            <Button
+              variant="outline"
               disabled={isSubmitting}
               onClick={() => setOpenEdit(false)}
-              className="px-4 py-2 border rounded-md text-sm font-medium hover:bg-slate-50 transition-colors disabled:opacity-50"
             >
               Cancel
-            </button>
-
-            <button
-              disabled={isSubmitting}
-              onClick={handleUpdateProduct}
-              className="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-semibold hover:bg-blue-700 disabled:bg-blue-400 shadow-sm transition-all flex items-center gap-2"
-            >
+            </Button>
+            <Button disabled={isSubmitting} onClick={handleUpdateProduct}>
               {isSubmitting ? "Saving..." : "Save Changes"}
-            </button>
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
-
-      <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-        <ProductsList products={products} handleEditOpen={handleEditOpen} />
-      </div>
-    </div>
+    </>
   )
 }
